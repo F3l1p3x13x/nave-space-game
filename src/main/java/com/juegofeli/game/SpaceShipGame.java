@@ -7,7 +7,7 @@ import java.awt.event.WindowEvent;
 public class SpaceShipGame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Juego de Nave Espacial");
+            JFrame frame = new JFrame("Misión Estelar de Felipe");
             GamePanel gamePanel = new GamePanel();
             
             frame.add(gamePanel);

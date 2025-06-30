@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -13,6 +16,15 @@ import java.util.Random;
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private static final int PANEL_WIDTH = 800;
     private static final int PANEL_HEIGHT = 600;
+    
+    // Estados del juego
+    private enum GameState {
+        INTRO_SCREEN,
+        PLAYING,
+        GAME_OVER
+    }
+    
+    private GameState currentState;
     
     private Timer gameTimer;
     private SpaceShip spaceShip;
@@ -57,11 +69,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private int shootCooldown;
     private static final int SHOOT_COOLDOWN_TIME = 8; // Cooldown entre disparos (8 frames = ~133ms)
     
+    // Imágenes para pantalla inicial
+    private BufferedImage felipeImage;
+    private BufferedImage naveImage;
+    
     public GamePanel() {
         this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.addKeyListener(this);
+        
+        // Establecer estado inicial
+        currentState = GameState.INTRO_SCREEN;
         
         random = new Random();
         obstacles = new ArrayList<>();
@@ -69,6 +88,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         meteorites = new ArrayList<>();
         meteoriteRandom = new Random();
         bullets = new ArrayList<>();
+        
+        // Cargar imágenes para pantalla inicial
+        loadIntroImages();
         
         // Crear estrellas de fondo
         createStars();
@@ -81,6 +103,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         
         // Configurar temporizador
         gameTimer = new Timer(16, this); // ~60 FPS
+        gameTimer.start(); // Iniciar timer para mostrar pantalla inicial
         obstacleSpawnDelay = 80; // Cada ~1.3 segundos
     }
     
@@ -90,7 +113,34 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
     
+    private void loadIntroImages() {
+        try {
+            // Cargar imagen de Felipe (astronauta)
+            java.io.InputStream felipeStream = getClass().getResourceAsStream("/images/felipe.png");
+            if (felipeStream != null) {
+                felipeImage = ImageIO.read(felipeStream);
+                felipeStream.close();
+                System.out.println("✅ Imagen felipe.png cargada exitosamente");
+            } else {
+                System.out.println("⚠️ No se pudo cargar felipe.png");
+            }
+            
+            // Cargar imagen de la nave
+            java.io.InputStream naveStream = getClass().getResourceAsStream("/images/nave_space_ship.png");
+            if (naveStream != null) {
+                naveImage = ImageIO.read(naveStream);
+                naveStream.close();
+                System.out.println("✅ Imagen nave_space_ship.png cargada exitosamente");
+            } else {
+                System.out.println("⚠️ No se pudo cargar nave_space_ship.png");
+            }
+        } catch (IOException e) {
+            System.err.println("❌ Error cargando imágenes de intro: " + e.getMessage());
+        }
+    }
+    
     public void startGame() {
+        currentState = GameState.PLAYING;
         gameRunning = true;
         startTime = System.currentTimeMillis();
         lastDifficultyIncrease = startTime;
@@ -117,8 +167,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // Resetear estado de teclas presionadas
         upPressed = downPressed = leftPressed = rightPressed = false;
         
-        gameTimer.start();
-        
         // Iniciar música espacial
         if (musicPlayer != null) {
             musicPlayer.playMusic();
@@ -127,8 +175,30 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (gameRunning) {
-            update();
+        switch (currentState) {
+            case INTRO_SCREEN:
+                // Solo actualizar estrellas de fondo en pantalla inicial
+                for (Star star : stars) {
+                    star.update();
+                    if (star.getX() < 0) {
+                        star.reset(PANEL_WIDTH);
+                    }
+                }
+                break;
+            case PLAYING:
+                if (gameRunning) {
+                    update();
+                }
+                break;
+            case GAME_OVER:
+                // Actualizar estrellas de fondo en game over
+                for (Star star : stars) {
+                    star.update();
+                    if (star.getX() < 0) {
+                        star.reset(PANEL_WIDTH);
+                    }
+                }
+                break;
         }
         repaint();
     }
@@ -194,7 +264,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             // Verificar colisiones
             else if (spaceShip.getBounds().intersects(obstacle.getBounds())) {
                 gameRunning = false;
-                gameTimer.stop();
+                currentState = GameState.GAME_OVER;
                 
                 // Detener música al terminar el juego
                 if (musicPlayer != null) {
@@ -217,7 +287,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             // Verificar colisiones con meteoritos
             else if (spaceShip.getBounds().intersects(meteorite.getBounds())) {
                 gameRunning = false;
-                gameTimer.stop();
+                currentState = GameState.GAME_OVER;
                 
                 // Detener música al terminar el juego
                 if (musicPlayer != null) {
@@ -336,6 +406,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         
         g2d.dispose();
         
+        switch (currentState) {
+            case INTRO_SCREEN:
+                drawIntroScreen(g);
+                break;
+            case PLAYING:
+                drawGameScreen(g);
+                break;
+            case GAME_OVER:
+                drawGameOverScreen(g);
+                break;
+        }
+    }
+    
+    private void drawGameScreen(Graphics g) {
         if (gameRunning) {
             // Dibujar nave espacial
             spaceShip.draw(g);
@@ -417,52 +501,160 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 g.drawString(difficultyText, (PANEL_WIDTH - fm.stringWidth(difficultyText)) / 2, PANEL_HEIGHT / 2 + 40);
             }
             
-        } else {
-            // Pantalla de game over
-            g.setColor(Color.RED);
-            g.setFont(new Font("Arial", Font.BOLD, 48));
-            FontMetrics fm = g.getFontMetrics();
-            String gameOverText = "GAME OVER";
-            g.drawString(gameOverText, (PANEL_WIDTH - fm.stringWidth(gameOverText)) / 2, PANEL_HEIGHT / 2 - 50);
-            
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 24));
-            fm = g.getFontMetrics();
-            String scoreText = "Tiempo sobrevivido: " + score + " segundos";
-            g.drawString(scoreText, (PANEL_WIDTH - fm.stringWidth(scoreText)) / 2, PANEL_HEIGHT / 2);
-            
-            String restartText = "Presiona ENTER para jugar de nuevo";
-            g.setFont(new Font("Arial", Font.PLAIN, 18));
-            fm = g.getFontMetrics();
-            g.drawString(restartText, (PANEL_WIDTH - fm.stringWidth(restartText)) / 2, PANEL_HEIGHT / 2 + 50);
         }
+    }
+    
+    private void drawIntroScreen(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        
+        // Título principal con efectos 3D
+        g2d.setFont(new Font("Arial", Font.BOLD, 64));
+        FontMetrics fm = g2d.getFontMetrics();
+        String title = "MISIÓN ESTELAR";
+        String subtitle = "DE FELIPE";
+        
+        // Sombra del título
+        g2d.setColor(new Color(0, 0, 50, 150));
+        g2d.drawString(title, (PANEL_WIDTH - fm.stringWidth(title)) / 2 + 3, 120 + 3);
+        g2d.drawString(subtitle, (PANEL_WIDTH - fm.stringWidth(subtitle)) / 2 + 3, 190 + 3);
+        
+        // Título principal con gradiente
+        GradientPaint titleGradient = new GradientPaint(
+            PANEL_WIDTH / 2, 100, new Color(255, 255, 100),
+            PANEL_WIDTH / 2, 140, new Color(255, 150, 0)
+        );
+        g2d.setPaint(titleGradient);
+        g2d.drawString(title, (PANEL_WIDTH - fm.stringWidth(title)) / 2, 120);
+        
+        GradientPaint subtitleGradient = new GradientPaint(
+            PANEL_WIDTH / 2, 170, new Color(100, 200, 255),
+            PANEL_WIDTH / 2, 210, new Color(0, 150, 255)
+        );
+        g2d.setPaint(subtitleGradient);
+        g2d.drawString(subtitle, (PANEL_WIDTH - fm.stringWidth(subtitle)) / 2, 190);
+        
+        // Dibujar imagen de Felipe (astronauta) si está cargada
+        if (felipeImage != null) {
+            int felipeWidth = 200;
+            int felipeHeight = (int) (felipeImage.getHeight() * ((double) felipeWidth / felipeImage.getWidth()));
+            int felipeX = 120;
+            int felipeY = PANEL_HEIGHT / 2 - felipeHeight / 2 + 50;
+            
+            // Sombra de Felipe
+            g2d.setColor(new Color(0, 0, 0, 100));
+            g2d.fillOval(felipeX + 5, felipeY + felipeHeight - 20, felipeWidth, 30);
+            
+            // Dibujar Felipe con halo
+            g2d.setColor(new Color(255, 255, 255, 30));
+            g2d.fillOval(felipeX - 10, felipeY - 10, felipeWidth + 20, felipeHeight + 20);
+            
+            g2d.drawImage(felipeImage, felipeX, felipeY, felipeWidth, felipeHeight, null);
+        }
+        
+        // Dibujar nave espacial si está cargada
+        if (naveImage != null) {
+            int naveWidth = 250;
+            int naveHeight = (int) (naveImage.getHeight() * ((double) naveWidth / naveImage.getWidth()));
+            int naveX = PANEL_WIDTH - naveWidth - 120;
+            int naveY = PANEL_HEIGHT / 2 - naveHeight / 2 + 50;
+            
+            // Sombra de la nave
+            g2d.setColor(new Color(0, 0, 0, 100));
+            g2d.fillOval(naveX + 5, naveY + naveHeight - 20, naveWidth, 30);
+            
+            // Halo de energía alrededor de la nave
+            g2d.setColor(new Color(0, 150, 255, 40));
+            g2d.fillOval(naveX - 15, naveY - 15, naveWidth + 30, naveHeight + 30);
+            
+            g2d.drawImage(naveImage, naveX, naveY, naveWidth, naveHeight, null);
+            
+            // Efectos de propulsores
+            for (int i = 0; i < 3; i++) {
+                RadialGradientPaint thrusterGlow = new RadialGradientPaint(
+                    naveX - 20 - i * 5, naveY + naveHeight / 2 + i * 10, 20 + i * 3,
+                    new float[]{0.0f, 0.6f, 1.0f},
+                    new Color[]{
+                        new Color(255, 200, 0, 150),
+                        new Color(255, 100, 0, 100),
+                        new Color(255, 50, 0, 50)
+                    }
+                );
+                g2d.setPaint(thrusterGlow);
+                g2d.fillOval(naveX - 35 - i * 5, naveY + naveHeight / 2 + i * 10 - 10, 40 + i * 6, 20 + i * 4);
+            }
+        }
+        
+        // Instrucciones con animación
+        long time = System.currentTimeMillis();
+        float alpha = (float) (0.7 + 0.3 * Math.sin(time * 0.003));
+        g2d.setColor(new Color(255, 255, 255, (int) (alpha * 255)));
+        g2d.setFont(new Font("Arial", Font.BOLD, 24));
+        fm = g2d.getFontMetrics();
+        String startText = "Presiona ESPACIO para comenzar la misión";
+        g2d.drawString(startText, (PANEL_WIDTH - fm.stringWidth(startText)) / 2, PANEL_HEIGHT - 80);
+        
+        // Controles
+        g2d.setColor(new Color(200, 200, 200));
+        g2d.setFont(new Font("Arial", Font.PLAIN, 16));
+        fm = g2d.getFontMetrics();
+        String controlsText = "Controles: Flechas = Mover | ESPACIO = Disparar";
+        g2d.drawString(controlsText, (PANEL_WIDTH - fm.stringWidth(controlsText)) / 2, PANEL_HEIGHT - 50);
+        
+        g2d.dispose();
+    }
+    
+    private void drawGameOverScreen(Graphics g) {
+        // Pantalla de game over
+        g.setColor(Color.RED);
+        g.setFont(new Font("Arial", Font.BOLD, 48));
+        FontMetrics fm = g.getFontMetrics();
+        String gameOverText = "GAME OVER";
+        g.drawString(gameOverText, (PANEL_WIDTH - fm.stringWidth(gameOverText)) / 2, PANEL_HEIGHT / 2 - 50);
+        
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        fm = g.getFontMetrics();
+        String scoreText = "Tiempo sobrevivido: " + score + " segundos";
+        g.drawString(scoreText, (PANEL_WIDTH - fm.stringWidth(scoreText)) / 2, PANEL_HEIGHT / 2);
+        
+        String restartText = "Presiona ENTER para jugar de nuevo";
+        g.setFont(new Font("Arial", Font.PLAIN, 18));
+        fm = g.getFontMetrics();
+        g.drawString(restartText, (PANEL_WIDTH - fm.stringWidth(restartText)) / 2, PANEL_HEIGHT / 2 + 50);
     }
     
     @Override
     public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                upPressed = true;
-                break;
-            case KeyEvent.VK_DOWN:
-                downPressed = true;
-                break;
-            case KeyEvent.VK_LEFT:
-                leftPressed = true;
-                break;
-            case KeyEvent.VK_RIGHT:
-                rightPressed = true;
-                break;
-            case KeyEvent.VK_SPACE:
-                if (!gameRunning) {
+        switch (currentState) {
+            case INTRO_SCREEN:
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     startGame();
-                } else {
-                    spacePressed = true;
                 }
                 break;
-            case KeyEvent.VK_ENTER:
-                if (!gameRunning) {
-                    startGame();
+            case PLAYING:
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_UP:
+                        upPressed = true;
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        downPressed = true;
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        leftPressed = true;
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        rightPressed = true;
+                        break;
+                    case KeyEvent.VK_SPACE:
+                        spacePressed = true;
+                        break;
+                }
+                break;
+            case GAME_OVER:
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    currentState = GameState.INTRO_SCREEN;
                 }
                 break;
         }
@@ -470,22 +662,24 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     
     @Override
     public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                upPressed = false;
-                break;
-            case KeyEvent.VK_DOWN:
-                downPressed = false;
-                break;
-            case KeyEvent.VK_LEFT:
-                leftPressed = false;
-                break;
-            case KeyEvent.VK_RIGHT:
-                rightPressed = false;
-                break;
-            case KeyEvent.VK_SPACE:
-                spacePressed = false;
-                break;
+        if (currentState == GameState.PLAYING) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_UP:
+                    upPressed = false;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    downPressed = false;
+                    break;
+                case KeyEvent.VK_LEFT:
+                    leftPressed = false;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    rightPressed = false;
+                    break;
+                case KeyEvent.VK_SPACE:
+                    spacePressed = false;
+                    break;
+            }
         }
     }
     
