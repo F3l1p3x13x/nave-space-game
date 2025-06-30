@@ -1,15 +1,21 @@
-# 🚀 Juego de Nave Espacial
+# 🚀 Misión Estelar de Felipe
 
 [![Java Version](https://img.shields.io/badge/Java-8%2B-orange)](https://www.oracle.com/java/)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)](./scripts/compile.sh)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](https://www.oracle.com/java/)
 
-Un emocionante juego de nave espacial desarrollado en Java con gráficos 2D avanzados, sistema de disparos láser, niveles progresivos y música MIDI espacial generada proceduralmente.
+Un emocionante juego de aventura espacial protagonizado por Felipe, desarrollado en Java con gráficos 2D avanzados, pantalla inicial cinematográfica, sistema de disparos láser, niveles progresivos y música MIDI espacial generada proceduralmente.
 
 ## 🎮 Demo en Vivo
 
-El juego presenta una nave espacial de **160x160 píxeles** que puede moverse libremente, disparar proyectiles láser y enfrentar oleadas crecientes de obstáculos espaciales con efectos visuales pseudo-3D espectaculares.
+**"Misión Estelar de Felipe"** inicia con una pantalla cinematográfica que presenta a Felipe, un valiente astronauta, junto a su nave espacial de última generación. El juego presenta una experiencia completa con nave espacial de **160x160 píxeles** que puede moverse libremente, disparar proyectiles láser y enfrentar oleadas crecientes de obstáculos espaciales con efectos visuales pseudo-3D espectaculares.
+
+### 🎬 Pantalla Inicial Cinematográfica
+- **Felipe el Astronauta**: Personaje principal con traje espacial completo
+- **Nave Espacial Avanzada**: Diseño futurista con efectos de energía
+- **Título con Efectos 3D**: "Misión Estelar de Felipe" con gradientes dorados
+- **Animaciones**: Texto parpadeante e instrucciones interactivas
 
 ## 📋 Características Principales
 
@@ -116,6 +122,12 @@ cd build/classes && java com.juegofeli.game.SpaceShipGame
 
 ## 🎮 Controles del Juego
 
+### 🎬 Pantalla Inicial
+| Tecla | Función | Descripción |
+|-------|---------|-------------|
+| **ESPACIO** | Iniciar Misión | Comienza la aventura espacial de Felipe |
+
+### 🚀 Durante el Juego
 | Tecla | Función | Descripción |
 |-------|---------|-------------|
 | **↑** | Mover Arriba | Acelera la nave hacia arriba |
@@ -123,7 +135,11 @@ cd build/classes && java com.juegofeli.game.SpaceShipGame
 | **←** | Mover Izquierda | Acelera la nave hacia la izquierda |
 | **→** | Mover Derecha | Acelera la nave hacia la derecha |
 | **ESPACIO** | Disparar Láser | Dispara proyectil láser (cooldown: 133ms) |
-| **ENTER** | Reiniciar | Reinicia el juego después de Game Over |
+
+### 💀 Game Over
+| Tecla | Función | Descripción |
+|-------|---------|-------------|
+| **ENTER** | Volver al Inicio | Regresa a la pantalla inicial cinematográfica |
 
 ## 🎯 Mecánicas de Juego Detalladas
 
@@ -166,11 +182,24 @@ cd build/classes && java com.juegofeli.game.SpaceShipGame
 
 ## 🛠️ Desarrollo y Personalización
 
-### 🎨 Personalizar la Nave Espacial
+### 🎨 Personalizar Imágenes del Juego
+
+#### 🚀 Nave Espacial
 1. **Reemplazar imagen**: Coloca tu PNG en `src/main/resources/images/nave_space_ship.png`
-2. **Tamaño recomendado**: 64x64 a 128x128 píxeles
+2. **Tamaño recomendado**: 128x128 a 256x256 píxeles
 3. **Formato**: PNG con transparencia (canal alpha)
-4. **Recompilar**: Ejecuta `./scripts/compile.sh`
+
+#### 👨‍🚀 Personaje Felipe
+1. **Reemplazar imagen**: Coloca tu PNG en `src/main/resources/images/felipe.png`
+2. **Tamaño recomendado**: 200x300 a 400x600 píxeles (proporción 2:3)
+3. **Formato**: PNG con transparencia para mejor integración
+
+#### 🔧 Aplicar Cambios
+Después de reemplazar cualquier imagen:
+```bash
+./scripts/compile.sh  # Recompila y copia recursos
+./scripts/run.sh      # Ejecuta con nuevas imágenes
+```
 
 ### ⚙️ Modificar Parámetros del Juego
 Edita las constantes en `src/main/java/com/juegofeli/game/GamePanel.java`:
