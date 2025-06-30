@@ -1,3 +1,5 @@
+package com.juegofeli.game;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -27,7 +29,31 @@ public class SpaceShip {
     
     private void loadSpaceShipImage() {
         try {
-            File imageFile = new File("nave_space_ship.png");
+            // Intentar cargar desde resources primero
+            java.io.InputStream imageStream = getClass().getResourceAsStream("/images/nave_space_ship.png");
+            if (imageStream != null) {
+                BufferedImage originalImage = ImageIO.read(imageStream);
+                imageStream.close();
+                
+                if (originalImage != null) {
+                    // Procesar la imagen para manejar transparencia correctamente
+                    spaceShipImage = processTransparency(originalImage);
+                    useImage = true;
+                    
+                    // Redimensionar la nave según la imagen si es necesario
+                    double imageRatio = (double) spaceShipImage.getWidth() / spaceShipImage.getHeight();
+                    this.height = 160; // Altura cuadruplicada para mejor visibilidad (era 40, luego 80)
+                    this.width = (int) (height * imageRatio);
+                    
+                    System.out.println("✅ Imagen nave_space_ship.png cargada exitosamente desde resources");
+                    System.out.println("📐 Dimensiones: " + width + "x" + height + " píxeles");
+                    System.out.println("🔍 Transparencia procesada correctamente");
+                    return;
+                }
+            }
+            
+            // Fallback: intentar cargar desde archivo local (para compatibilidad)
+            File imageFile = new File("src/main/resources/images/nave_space_ship.png");
             if (imageFile.exists()) {
                 BufferedImage originalImage = ImageIO.read(imageFile);
                 

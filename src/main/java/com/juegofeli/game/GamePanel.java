@@ -1,3 +1,5 @@
+package com.juegofeli.game;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -49,6 +51,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private int meteoriteSpawnTimer;
     private Random meteoriteRandom;
     
+    // Sistema de disparos
+    private ArrayList<Bullet> bullets;
+    private boolean spacePressed;
+    private int shootCooldown;
+    private static final int SHOOT_COOLDOWN_TIME = 8; // Cooldown entre disparos (8 frames = ~133ms)
+    
     public GamePanel() {
         this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         this.setBackground(Color.BLACK);
@@ -60,6 +68,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         stars = new ArrayList<>();
         meteorites = new ArrayList<>();
         meteoriteRandom = new Random();
+        bullets = new ArrayList<>();
         
         // Crear estrellas de fondo
         createStars();
@@ -90,8 +99,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         showLevelUpMessage = false;
         obstacles.clear();
         meteorites.clear();
+        bullets.clear();
         obstacleSpawnTimer = 0;
         meteoriteSpawnTimer = 0;
+        shootCooldown = 0;
+        spacePressed = false;
         
         // ========== CORRECIÓN DE BUG DE REINICIO ==========
         // Resetear TODAS las variables modificadas durante el juego a sus valores iniciales
@@ -144,6 +156,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (downPressed) spaceShip.moveDown();
         if (leftPressed) spaceShip.moveLeft();
         if (rightPressed) spaceShip.moveRight();
+        
+        // Sistema de disparos
+        handleShooting();
+        updateBullets();
         
         // Generar obstáculos
         obstacleSpawnTimer++;
@@ -240,6 +256,66 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
     
+    private void handleShooting() {
+        // Reducir cooldown
+        if (shootCooldown > 0) {
+            shootCooldown--;
+        }
+        
+        // Crear nueva bala si se presiona espacio y no hay cooldown
+        if (spacePressed && shootCooldown <= 0) {
+            // Crear bala desde la parte delantera de la nave
+            int bulletX = spaceShip.getX() + spaceShip.getWidth();
+            int bulletY = spaceShip.getY() + spaceShip.getHeight() / 2 - 2; // Centrada verticalmente
+            
+            bullets.add(new Bullet(bulletX, bulletY, PANEL_WIDTH));
+            shootCooldown = SHOOT_COOLDOWN_TIME;
+        }
+    }
+    
+    private void updateBullets() {
+        // Actualizar todas las balas
+        Iterator<Bullet> bulletIterator = bullets.iterator();
+        while (bulletIterator.hasNext()) {
+            Bullet bullet = bulletIterator.next();
+            bullet.update();
+            
+            // Remover balas inactivas
+            if (!bullet.isActive()) {
+                bulletIterator.remove();
+                continue;
+            }
+            
+            // Verificar colisiones con obstáculos
+            Iterator<Obstacle> obstacleIterator = obstacles.iterator();
+            while (obstacleIterator.hasNext()) {
+                Obstacle obstacle = obstacleIterator.next();
+                if (bullet.getBounds().intersects(obstacle.getBounds())) {
+                    // Destruir obstáculo y bala
+                    bulletIterator.remove();
+                    obstacleIterator.remove();
+                    score += 10; // Bonus por destruir obstáculo
+                    break;
+                }
+            }
+            
+            // Verificar colisiones con meteoritos
+            if (bullet.isActive()) {
+                Iterator<Meteorite> meteoriteIterator = meteorites.iterator();
+                while (meteoriteIterator.hasNext()) {
+                    Meteorite meteorite = meteoriteIterator.next();
+                    if (bullet.getBounds().intersects(meteorite.getBounds())) {
+                        // Destruir meteorito y bala
+                        bulletIterator.remove();
+                        meteoriteIterator.remove();
+                        score += 20; // Bonus mayor por destruir meteorito
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -274,6 +350,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 meteorite.draw(g);
             }
             
+            // Dibujar balas
+            for (Bullet bullet : bullets) {
+                bullet.draw(g);
+            }
+            
             // Mostrar tiempo/puntuación
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 20));
@@ -305,9 +386,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.PLAIN, 14));
             String controlText = difficultyLevel >= 6 ? 
-                "Flechas: mover nave - ¡Esquiva obstáculos y meteoritos!" : 
-                "Flechas: mover nave - ¡Esquiva todos los obstáculos!";
-            g.drawString(controlText, 10, PANEL_HEIGHT - 20);
+                "Flechas: mover nave | ESPACIO: disparar - ¡Esquiva y destruye obstáculos y meteoritos!" : 
+                "Flechas: mover nave | ESPACIO: disparar - ¡Esquiva o destruye obstáculos!";
+            g.drawString(controlText, 10, PANEL_HEIGHT - 40);
+            
+            // Mostrar estadísticas de disparos
+            g.setColor(Color.CYAN);
+            g.setFont(new Font("Arial", Font.PLAIN, 12));
+            g.drawString("Balas activas: " + bullets.size(), 10, PANEL_HEIGHT - 20);
             
             // Mostrar mensaje de nivel up si corresponde
             if (showLevelUpMessage) {
@@ -345,7 +431,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             String scoreText = "Tiempo sobrevivido: " + score + " segundos";
             g.drawString(scoreText, (PANEL_WIDTH - fm.stringWidth(scoreText)) / 2, PANEL_HEIGHT / 2);
             
-            String restartText = "Presiona ESPACIO para jugar de nuevo";
+            String restartText = "Presiona ENTER para jugar de nuevo";
             g.setFont(new Font("Arial", Font.PLAIN, 18));
             fm = g.getFontMetrics();
             g.drawString(restartText, (PANEL_WIDTH - fm.stringWidth(restartText)) / 2, PANEL_HEIGHT / 2 + 50);
@@ -370,6 +456,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             case KeyEvent.VK_SPACE:
                 if (!gameRunning) {
                     startGame();
+                } else {
+                    spacePressed = true;
+                }
+                break;
+            case KeyEvent.VK_ENTER:
+                if (!gameRunning) {
+                    startGame();
                 }
                 break;
         }
@@ -389,6 +482,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_RIGHT:
                 rightPressed = false;
+                break;
+            case KeyEvent.VK_SPACE:
+                spacePressed = false;
                 break;
         }
     }

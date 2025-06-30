@@ -1,139 +1,179 @@
-# Juego de Nave Espacial
+# 🚀 Juego de Nave Espacial
 
-Un juego de nave espacial en Java donde debes esquivar planetas y asteroides el mayor tiempo posible.
+Un emocionante juego de nave espacial desarrollado en Java con gráficos 2D avanzados, sistema de disparos, niveles progresivos y música MIDI espacial.
 
-## Características del Juego
+## 📋 Características
 
-- **Nave espacial**: Controlada con las flechas del teclado
-- **Obstáculos**: Planetas y asteroides que aparecen aleatoriamente
-- **Objetivo**: Sobrevivir el mayor tiempo posible sin chocar
-- **Puntuación**: Tiempo sobrevivido en segundos
-- **Dificultad progresiva**: Cada 30 segundos aumenta la dificultad con obstáculos más rápidos, grandes y frecuentes
-- **Lluvia de meteoritos**: A partir del nivel 6, meteoritos caen en diagonal durante 3 segundos
-- **Gráficos 3D**: Efectos visuales pseudo-3D con gradientes, sombras y profundidad
-- **Música espacial**: Banda sonora MIDI generada dinámicamente con melodías y efectos ambientales
+### 🎮 Mecánicas de Juego
+- **Nave espacial controlable** con flechas del teclado
+- **Sistema de disparos** con láser espacial (barra espaciadora)
+- **Obstáculos variados**: Planetas coloridos y asteroides peligrosos
+- **Lluvia de meteoritos** desde el nivel 6 con efectos ardientes
+- **Sistema de niveles progresivos** cada 30 segundos
+- **Puntuación basada** en tiempo sobrevivido + enemigos destruidos
 
-## Controles
+### 🎨 Gráficos Avanzados
+- **Gráficos pseudo-3D** con gradientes y efectos volumétricos
+- **Campo estelar dinámico** con paralaje y titilación
+- **Efectos de partículas** para propulsores y meteoritos
+- **Soporte para imagen PNG personalizada** de la nave
+- **Fondo espacial** con nebulosas y gradientes atmosféricos
 
-- **Flechas del teclado**: Mover la nave (arriba, abajo, izquierda, derecha)
-- **Barra espaciadora**: Reiniciar el juego después de Game Over (reseteo completo a estado inicial)
+### 🎵 Audio
+- **Música MIDI espacial** generada programáticamente
+- **3 canales de audio**: melodía, armonía y efectos ambientales
+- **Reproducción en loop** continuo durante el juego
 
-## Cómo Compilar y Ejecutar
+## 🏗️ Estructura del Proyecto
 
-### Requisitos
-- Java 8 o superior instalado en tu sistema
-
-### Compilación
-```bash
-javac *.java
+```
+JUEGOFELI/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── juegofeli/
+│   │   │           └── game/
+│   │   │               ├── SpaceShipGame.java     # Clase principal
+│   │   │               ├── GamePanel.java         # Motor del juego
+│   │   │               ├── SpaceShip.java         # Nave espacial
+│   │   │               ├── Bullet.java            # Sistema de disparos
+│   │   │               ├── Obstacle.java          # Obstáculos (planetas/asteroides)
+│   │   │               ├── Meteorite.java         # Meteoritos ardientes
+│   │   │               └── MusicPlayer.java       # Reproductor MIDI
+│   │   └── resources/
+│   │       └── images/
+│   │           └── nave_space_ship.png           # Imagen personalizada de la nave
+├── build/
+│   └── classes/                                  # Archivos compilados
+├── docs/                                         # Documentación
+├── scripts/
+│   ├── compile.sh                               # Script de compilación
+│   ├── run.sh                                   # Script de ejecución  
+│   └── dev.sh                                   # Desarrollo (compila + ejecuta)
+├── .gitignore                                   # Exclusiones de Git
+└── README.md                                    # Este archivo
 ```
 
-### Ejecución
+## 🚀 Instalación y Ejecución
+
+### Prerrequisitos
+- **Java JDK 8+** instalado
+- **Git** para clonar el repositorio
+
+### Clonar el Repositorio
 ```bash
-java SpaceShipGame
+git clone https://github.com/F3l1p3x13x/nave-space-game.git
+cd nave-space-game
 ```
 
-## Archivos del Proyecto
+### Compilación y Ejecución
 
-- `SpaceShipGame.java`: Clase principal que inicia el juego
-- `GamePanel.java`: Panel del juego que maneja toda la lógica
-- `SpaceShip.java`: Clase que representa la nave espacial del jugador
-- `Obstacle.java`: Clase que representa planetas y asteroides
-- `Meteorite.java`: Clase que representa meteoritos que caen diagonalmente
-- `MusicPlayer.java`: Sistema de reproducción de música MIDI espacial
+#### Opción 1: Modo Desarrollo (Recomendado)
+```bash
+./scripts/dev.sh
+```
+*Compila y ejecuta automáticamente*
 
-## Reglas del Juego
+#### Opción 2: Manual
+```bash
+# Compilar
+./scripts/compile.sh
 
-1. Usa las flechas del teclado para mover tu nave espacial
-2. Evita chocar con planetas (círculos grandes de colores) y asteroides (círculos marrones más pequeños)
-3. El juego termina cuando chocas con cualquier obstáculo
-4. Tu puntuación es el tiempo que logres sobrevivir (en segundos)
-5. **Sistema de niveles**: Cada 30 segundos la dificultad aumenta automáticamente
-   - Los obstáculos aparecen más frecuentemente
-   - Se mueven más rápido
-   - Son ligeramente más grandes
-   - **NIVEL 6+**: ¡Lluvia de meteoritos activada!
-   - Aparece un mensaje "¡NIVEL X!" cuando subes de nivel
-6. **Meteoritos (Nivel 6+)**:
-   - Caen diagonalmente desde arriba
-   - Duran exactamente 3 segundos antes de desaparecer
-   - Aparecen aleatoriamente con mayor frecuencia en niveles altos
-   - Tienen estelas de fuego y rotación visual
-   - Son más pequeños pero igual de letales que los obstáculos normales
-7. La pantalla muestra tu nivel actual, tiempo hasta próximo nivel y meteoritos activos
-8. ¡Intenta superar tu récord personal y alcanzar el nivel más alto!
+# Ejecutar
+./scripts/run.sh
+```
 
-## Características Técnicas
+#### Opción 3: Comando Directo
+```bash
+# Compilar
+javac -d build/classes -cp src/main/java src/main/java/com/juegofeli/game/*.java
+cp -r src/main/resources/* build/classes/
 
-- Desarrollado con Java Swing y Graphics2D
-- Frecuencia de actualización: ~60 FPS
-- Resolución: 800x600 píxeles
-- Detección de colisiones basada en rectángulos delimitadores
-- **Motor Gráfico 3D Avanzado**:
-  - Anti-aliasing completo para suavizado de bordes
-  - Gradientes radiales y lineales para efectos volumétricos
-  - Sistema de transparencias y composición alfa
-  - Efectos de iluminación y sombras proyectadas
-  - Paralaje multicapa para sensación de profundidad
-  - Rotaciones y transformaciones en tiempo real
-- **Sistema de audio MIDI**:
-  - Música espacial generada programáticamente
-  - 3 canales de audio: melodía principal, armonía y efectos ambientales
-  - Instrumentos sintetizadores espaciales (Pad Choir, Warm Pad, Sci-Fi FX)
-  - Reproducción en loop continuo durante el juego
-  - Gestión automática de recursos de audio
+# Ejecutar
+cd build/classes && java com.juegofeli.game.SpaceShipGame
+```
 
-## 🎨 Efectos Visuales 3D
+## 🎮 Controles
 
-El juego cuenta con gráficos pseudo-3D avanzados que crean una experiencia visual inmersiva:
+| Tecla | Acción |
+|-------|--------|
+| **↑ ↓ ← →** | Mover nave espacial |
+| **ESPACIO** | Disparar láser |
+| **ENTER** | Reiniciar juego (después de Game Over) |
 
-### **🚀 Nave Espacial 3D**
-- **Gradientes metálicos**: Efectos de iluminación realistas con brillos y sombras
-- **Cabina de cristal**: Reflejos y transparencias que simulan vidrio espacial
-- **Propulsores ardientes**: Llamas con gradientes radiales y núcleos brillantes
-- **Sombras proyectadas**: Efectos de profundidad para mayor realismo
+## 🎯 Sistema de Juego
 
-### **🌍 Planetas Realistas**
-- **Gradientes esféricos**: Iluminación que simula la curvatura planetaria
-- **Características geográficas**: Continentes y océanos con transparencias
-- **Anillos planetarios**: Perspectiva elíptica con efectos de profundidad
-- **Atmósferas**: Halos sutiles alrededor de los planetas
-- **Reflejos especulares**: Brillos que simulan luz solar
+### Niveles de Dificultad
+- **Nivel 1-5**: Obstáculos básicos (planetas y asteroides)
+- **Nivel 6+**: Se activa la lluvia de meteoritos ardientes
+- **Escalado**: Cada nivel aumenta velocidad y frecuencia de enemigos
 
-### **☄️ Asteroides Texturizados**
-- **Superficie rugosa**: Cráteres 3D con gradientes cóncavos
-- **Iluminación direccional**: Efectos de luz y sombra realistas
-- **Bordes iluminados**: Reflejos que dan sensación de volumen
+### Sistema de Puntuación
+- **+1 punto** por segundo sobrevivido
+- **+10 puntos** por cada obstáculo destruido
+- **+20 puntos** por cada meteorito destruido
 
-### **🌠 Meteoritos Ardientes**
-- **Estelas de fuego avanzadas**: 8 capas de gradientes con partículas
-- **Núcleos ardientes**: Múltiples capas de intensidad lumínica
-- **Rotación realista**: Movimiento tridimensional convincente
-- **Halos de calor**: Efectos de energía alrededor del meteorito
+### Tipos de Enemigos
+1. **Planetas**: Círculos grandes con atmósferas y características geográficas
+2. **Asteroides**: Superficies rugosas con cráteres e iluminación realista
+3. **Meteoritos**: (Nivel 6+) Proyectiles ardientes con estelas de fuego
 
-### **✨ Campo Estelar 3D**
-- **Paralaje espacial**: Estrellas a diferentes profundidades se mueven a velocidades distintas
-- **Titileo realista**: 30% de las estrellas titilan con fases aleatorias
-- **Colores de temperatura**: Estrellas cercanas amarillentas, lejanas azuladas
-- **Destellos cruzados**: Estrellas brillantes con efectos de difracción
-- **Halos graduales**: Efectos de brillo que simulan atmósfera
+## 🛠️ Desarrollo
 
-### **🌌 Fondo Espacial Profundo**
-- **Gradientes atmosféricos**: Transición de azul oscuro a púrpura espacial
-- **Nebulosas distantes**: Efectos volumétricos con transparencias
-- **Profundidad visual**: Múltiples capas que crean sensación de infinito
+### Arquitectura
+- **Patrón MVC**: Separación clara entre modelo, vista y controlador
+- **Estructura de paquetes Java estándar**: `com.juegofeli.game`
+- **Gestión de recursos**: Sistema de carga desde `resources/`
+- **Renderizado optimizado**: Graphics2D con anti-aliasing
 
-## 🌟 Desafío Especial: ¡Nivel 6!
+### Características Técnicas
+- **Engine**: Java Swing con Timer para loop de juego (~60 FPS)
+- **Gráficos**: Java 2D API con efectos avanzados
+- **Audio**: Java Sound API para MIDI
+- **Colisiones**: Sistema de Rectangle bounds intersection
+- **Memoria**: Gestión automática de objetos fuera de pantalla
 
-A partir del nivel 6 (después de 2 minutos y 30 segundos), el juego se transforma completamente con la **Lluvia de Meteoritos**. Estos pequeños proyectiles ardientes caen diagonalmente y crean un patrón de esquiva completamente nuevo. ¡La verdadera prueba de habilidad comienza aquí!
+## 🎨 Personalización
 
-## 🐛 Correcciones de Bugs
+### Cambiar Imagen de la Nave
+1. Reemplazar `src/main/resources/images/nave_space_ship.png`
+2. Recomendado: PNG con transparencia, tamaño 64x64 píxeles o similar
+3. Recompilar el proyecto
 
-- **Bug de Reinicio Corregido**: Ahora al reiniciar el juego después de perder, todos los parámetros vuelven exactamente a su estado inicial:
-  - Frecuencia de spawn de obstáculos resetea a valor inicial (80 frames)
-  - Posición de la nave vuelve al centro-izquierda inicial
-  - Estado de teclas presionadas se limpia completamente
-  - Nivel de dificultad vuelve a 1
-  - Listas de obstáculos y meteoritos se vacían completamente
+### Modificar Parámetros de Juego
+Editar constantes en `GamePanel.java`:
+- `SHOOT_COOLDOWN_TIME`: Velocidad de disparo
+- `obstacleSpawnDelay`: Frecuencia de obstáculos
+- Velocidades de movimiento en las clases individuales
 
-¡Disfruta el juego y trata de sobrevivir el mayor tiempo posible! 
+## 📊 Estadísticas del Proyecto
+
+- **Archivos Java**: 7 clases principales
+- **Líneas de código**: ~1,400 líneas
+- **Funcionalidades**: 15+ características implementadas
+- **Efectos gráficos**: 20+ tipos diferentes
+- **Compatibilidad**: Java 8 - Java 21
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crear una branch de feature (`git checkout -b feature/NuevaCaracteristica`)
+3. Commit los cambios (`git commit -m 'Agregar nueva característica'`)
+4. Push a la branch (`git push origin feature/NuevaCaracteristica`)
+5. Abrir un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver archivo [LICENSE](LICENSE) para detalles.
+
+## 🏆 Créditos
+
+- **Desarrollo**: Equipo de desarrollo del juego
+- **Motor gráfico**: Java 2D API
+- **Audio**: Java Sound API (MIDI)
+- **Inspiración**: Juegos clásicos de naves espaciales tipo Asteroids
+
+---
+
+**¡Disfruta el juego y que tengas vuelos espaciales épicos! 🌌** 

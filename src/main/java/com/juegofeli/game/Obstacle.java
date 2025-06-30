@@ -1,3 +1,5 @@
+package com.juegofeli.game;
+
 import java.awt.*;
 import java.util.Random;
 

@@ -1,3 +1,5 @@
+package com.juegofeli.game;
+
 import javax.sound.midi.*;
 
 public class MusicPlayer {
