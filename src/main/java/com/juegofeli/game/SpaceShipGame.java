@@ -26,7 +26,6 @@ public class SpaceShipGame {
             });
             
             frame.setVisible(true);
-            gamePanel.startGame();
         });
     }
 } 

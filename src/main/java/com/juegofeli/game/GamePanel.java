@@ -81,6 +81,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         
         // Establecer estado inicial
         currentState = GameState.INTRO_SCREEN;
+        gameRunning = false; // Importante: No iniciar el juego automáticamente
+        
+
         
         random = new Random();
         obstacles = new ArrayList<>();
@@ -101,10 +104,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // Inicializar reproductor de música
         musicPlayer = new MusicPlayer();
         
+        // Iniciar música épica de introducción
+        if (musicPlayer != null) {
+            musicPlayer.playIntroMusic();
+        }
+        
         // Configurar temporizador
         gameTimer = new Timer(16, this); // ~60 FPS
         gameTimer.start(); // Iniciar timer para mostrar pantalla inicial
         obstacleSpawnDelay = 80; // Cada ~1.3 segundos
+        
+
     }
     
     private void createStars() {
@@ -115,31 +125,117 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     
     private void loadIntroImages() {
         try {
-            // Cargar imagen de Felipe (astronauta)
+            // Cargar SOLO imagen de Felipe (astronauta)
             java.io.InputStream felipeStream = getClass().getResourceAsStream("/images/felipe.png");
             if (felipeStream != null) {
                 felipeImage = ImageIO.read(felipeStream);
                 felipeStream.close();
                 System.out.println("✅ Imagen felipe.png cargada exitosamente");
+                System.out.println("📐 Felipe dimensiones: " + felipeImage.getWidth() + "x" + felipeImage.getHeight() + " píxeles");
             } else {
                 System.out.println("⚠️ No se pudo cargar felipe.png");
             }
-            
-            // Cargar imagen de la nave
-            java.io.InputStream naveStream = getClass().getResourceAsStream("/images/nave_space_ship.png");
-            if (naveStream != null) {
-                naveImage = ImageIO.read(naveStream);
-                naveStream.close();
-                System.out.println("✅ Imagen nave_space_ship.png cargada exitosamente");
-            } else {
-                System.out.println("⚠️ No se pudo cargar nave_space_ship.png");
-            }
         } catch (IOException e) {
-            System.err.println("❌ Error cargando imágenes de intro: " + e.getMessage());
+            System.err.println("❌ Error cargando imagen de Felipe: " + e.getMessage());
         }
     }
     
+    /**
+     * Procesa una imagen para hacer transparentes los píxeles de fondo
+     * Detecta automáticamente el color de fondo más común en los bordes
+     */
+    private BufferedImage processImageTransparency(BufferedImage original) {
+        if (original == null) return null;
+        
+        int width = original.getWidth();
+        int height = original.getHeight();
+        
+        // Crear nueva imagen con canal alfa
+        BufferedImage processedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        
+        // Detectar color de fondo basado en las esquinas y bordes
+        Color backgroundColor = detectBackgroundColor(original);
+        int bgRGB = backgroundColor.getRGB() & 0x00FFFFFF; // Sin canal alfa
+        
+        // Umbral de tolerancia para colores similares al fondo
+        int tolerance = 30;
+        
+        // Procesar cada píxel
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixelRGB = original.getRGB(x, y);
+                int pixelColor = pixelRGB & 0x00FFFFFF; // Sin canal alfa
+                
+                // Calcular diferencia de color
+                int rDiff = Math.abs(((pixelColor >> 16) & 0xFF) - ((bgRGB >> 16) & 0xFF));
+                int gDiff = Math.abs(((pixelColor >> 8) & 0xFF) - ((bgRGB >> 8) & 0xFF));
+                int bDiff = Math.abs((pixelColor & 0xFF) - (bgRGB & 0xFF));
+                int totalDiff = rDiff + gDiff + bDiff;
+                
+                if (totalDiff <= tolerance) {
+                    // Hacer transparente
+                    processedImage.setRGB(x, y, 0x00000000);
+                } else {
+                    // Mantener píxel original
+                    processedImage.setRGB(x, y, pixelRGB);
+                }
+            }
+        }
+        
+        return processedImage;
+    }
+    
+    /**
+     * Detecta el color de fondo más común en los bordes de la imagen
+     */
+    private Color detectBackgroundColor(BufferedImage image) {
+        if (image == null) return Color.WHITE;
+        
+        java.util.Map<Integer, Integer> colorCount = new java.util.HashMap<>();
+        int width = image.getWidth();
+        int height = image.getHeight();
+        
+        // Muestrear píxeles de los bordes
+        // Borde superior
+        for (int x = 0; x < width; x++) {
+            int rgb = image.getRGB(x, 0) & 0x00FFFFFF;
+            colorCount.put(rgb, colorCount.getOrDefault(rgb, 0) + 1);
+        }
+        
+        // Borde inferior
+        for (int x = 0; x < width; x++) {
+            int rgb = image.getRGB(x, height - 1) & 0x00FFFFFF;
+            colorCount.put(rgb, colorCount.getOrDefault(rgb, 0) + 1);
+        }
+        
+        // Borde izquierdo
+        for (int y = 0; y < height; y++) {
+            int rgb = image.getRGB(0, y) & 0x00FFFFFF;
+            colorCount.put(rgb, colorCount.getOrDefault(rgb, 0) + 1);
+        }
+        
+        // Borde derecho
+        for (int y = 0; y < height; y++) {
+            int rgb = image.getRGB(width - 1, y) & 0x00FFFFFF;
+            colorCount.put(rgb, colorCount.getOrDefault(rgb, 0) + 1);
+        }
+        
+        // Encontrar el color más frecuente
+        int mostCommonColor = 0xFFFFFF; // Blanco por defecto
+        int maxCount = 0;
+        
+        for (java.util.Map.Entry<Integer, Integer> entry : colorCount.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostCommonColor = entry.getKey();
+            }
+        }
+        
+        return new Color(mostCommonColor);
+    }
+    
     public void startGame() {
+
         currentState = GameState.PLAYING;
         gameRunning = true;
         startTime = System.currentTimeMillis();
@@ -167,9 +263,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // Resetear estado de teclas presionadas
         upPressed = downPressed = leftPressed = rightPressed = false;
         
-        // Iniciar música espacial
+        // Cambiar a música del juego
         if (musicPlayer != null) {
-            musicPlayer.playMusic();
+            musicPlayer.stopMusic();
+            musicPlayer.playGameMusic();
         }
     }
     
@@ -393,19 +490,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
     
     private void draw(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        // Dibujar fondo espacial con gradiente 3D
-        drawSpaceBackground(g2d);
-        
-        // Dibujar estrellas de fondo con efectos 3D
-        for (Star star : stars) {
-            star.draw(g2d);
-        }
-        
-        g2d.dispose();
-        
         switch (currentState) {
             case INTRO_SCREEN:
                 drawIntroScreen(g);
@@ -421,6 +505,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     
     private void drawGameScreen(Graphics g) {
         if (gameRunning) {
+            // Dibujar fondo espacial con gradiente 3D
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            drawSpaceBackground(g2d);
+            
+            // Dibujar estrellas de fondo con efectos 3D
+            for (Star star : stars) {
+                star.draw(g2d);
+            }
+            g2d.dispose();
+            
             // Dibujar nave espacial
             spaceShip.draw(g);
             
@@ -508,6 +603,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        
+        // Dibujar fondo espacial con estrellas
+        drawSpaceBackground(g2d);
         
         // Título principal con efectos 3D
         g2d.setFont(new Font("Arial", Font.BOLD, 64));
@@ -515,32 +615,33 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         String title = "MISIÓN ESTELAR";
         String subtitle = "DE FELIPE";
         
-        // Sombra del título
-        g2d.setColor(new Color(0, 0, 50, 150));
+        // Sombra del título en tonos oscuros
+        g2d.setColor(new Color(50, 0, 30, 150));
         g2d.drawString(title, (PANEL_WIDTH - fm.stringWidth(title)) / 2 + 3, 120 + 3);
         g2d.drawString(subtitle, (PANEL_WIDTH - fm.stringWidth(subtitle)) / 2 + 3, 190 + 3);
         
-        // Título principal con gradiente
+        // Título principal con gradiente rojo-rosa
         GradientPaint titleGradient = new GradientPaint(
-            PANEL_WIDTH / 2, 100, new Color(255, 255, 100),
-            PANEL_WIDTH / 2, 140, new Color(255, 150, 0)
+            PANEL_WIDTH / 2, 100, new Color(255, 50, 100),  // Rosa intenso
+            PANEL_WIDTH / 2, 140, new Color(200, 0, 50)     // Rojo profundo
         );
         g2d.setPaint(titleGradient);
         g2d.drawString(title, (PANEL_WIDTH - fm.stringWidth(title)) / 2, 120);
         
+        // Subtítulo con gradiente azul-rosa
         GradientPaint subtitleGradient = new GradientPaint(
-            PANEL_WIDTH / 2, 170, new Color(100, 200, 255),
-            PANEL_WIDTH / 2, 210, new Color(0, 150, 255)
+            PANEL_WIDTH / 2, 170, new Color(100, 150, 255), // Azul claro
+            PANEL_WIDTH / 2, 210, new Color(180, 50, 200)   // Rosa-púrpura
         );
         g2d.setPaint(subtitleGradient);
         g2d.drawString(subtitle, (PANEL_WIDTH - fm.stringWidth(subtitle)) / 2, 190);
         
-        // Dibujar imagen de Felipe (astronauta) si está cargada
+        // Dibujar imagen de Felipe (astronauta) centrada si está cargada
         if (felipeImage != null) {
-            int felipeWidth = 200;
+            int felipeWidth = 180;  // Tamaño más pequeño para no tapar el texto
             int felipeHeight = (int) (felipeImage.getHeight() * ((double) felipeWidth / felipeImage.getWidth()));
-            int felipeX = 120;
-            int felipeY = PANEL_HEIGHT / 2 - felipeHeight / 2 + 50;
+            int felipeX = (PANEL_WIDTH - felipeWidth) / 2;  // Centrar horizontalmente
+            int felipeY = 280;  // Posición fija para dejar espacio al texto de abajo
             
             // Sombra de Felipe
             g2d.setColor(new Color(0, 0, 0, 100));
@@ -550,40 +651,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             g2d.setColor(new Color(255, 255, 255, 30));
             g2d.fillOval(felipeX - 10, felipeY - 10, felipeWidth + 20, felipeHeight + 20);
             
-            g2d.drawImage(felipeImage, felipeX, felipeY, felipeWidth, felipeHeight, null);
-        }
-        
-        // Dibujar nave espacial si está cargada
-        if (naveImage != null) {
-            int naveWidth = 250;
-            int naveHeight = (int) (naveImage.getHeight() * ((double) naveWidth / naveImage.getWidth()));
-            int naveX = PANEL_WIDTH - naveWidth - 120;
-            int naveY = PANEL_HEIGHT / 2 - naveHeight / 2 + 50;
-            
-            // Sombra de la nave
-            g2d.setColor(new Color(0, 0, 0, 100));
-            g2d.fillOval(naveX + 5, naveY + naveHeight - 20, naveWidth, 30);
-            
-            // Halo de energía alrededor de la nave
-            g2d.setColor(new Color(0, 150, 255, 40));
-            g2d.fillOval(naveX - 15, naveY - 15, naveWidth + 30, naveHeight + 30);
-            
-            g2d.drawImage(naveImage, naveX, naveY, naveWidth, naveHeight, null);
-            
-            // Efectos de propulsores
-            for (int i = 0; i < 3; i++) {
-                RadialGradientPaint thrusterGlow = new RadialGradientPaint(
-                    naveX - 20 - i * 5, naveY + naveHeight / 2 + i * 10, 20 + i * 3,
-                    new float[]{0.0f, 0.6f, 1.0f},
-                    new Color[]{
-                        new Color(255, 200, 0, 150),
-                        new Color(255, 100, 0, 100),
-                        new Color(255, 50, 0, 50)
-                    }
-                );
-                g2d.setPaint(thrusterGlow);
-                g2d.fillOval(naveX - 35 - i * 5, naveY + naveHeight / 2 + i * 10 - 10, 40 + i * 6, 20 + i * 4);
-            }
+            // Configurar composición para transparencia
+            g2d.setComposite(AlphaComposite.SrcOver);
+            g2d.drawImage(felipeImage, felipeX, felipeY, felipeWidth, felipeHeight, this);
         }
         
         // Instrucciones con animación
@@ -592,7 +662,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g2d.setColor(new Color(255, 255, 255, (int) (alpha * 255)));
         g2d.setFont(new Font("Arial", Font.BOLD, 24));
         fm = g2d.getFontMetrics();
-        String startText = "Presiona ESPACIO para comenzar la misión";
+        String startText = "Presiona ENTER para comenzar la misión";
         g2d.drawString(startText, (PANEL_WIDTH - fm.stringWidth(startText)) / 2, PANEL_HEIGHT - 80);
         
         // Controles
@@ -606,6 +676,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
     
     private void drawGameOverScreen(Graphics g) {
+        // Dibujar fondo espacial con estrellas
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        drawSpaceBackground(g2d);
+        
+        // Dibujar estrellas de fondo
+        for (Star star : stars) {
+            star.draw(g2d);
+        }
+        g2d.dispose();
+        
         // Pantalla de game over
         g.setColor(Color.RED);
         g.setFont(new Font("Arial", Font.BOLD, 48));
@@ -629,7 +710,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (currentState) {
             case INTRO_SCREEN:
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     startGame();
                 }
                 break;
@@ -655,6 +736,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             case GAME_OVER:
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     currentState = GameState.INTRO_SCREEN;
+                    // Volver a reproducir música de introducción
+                    if (musicPlayer != null) {
+                        musicPlayer.stopMusic();
+                        musicPlayer.playIntroMusic();
+                    }
                 }
                 break;
         }
