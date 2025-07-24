@@ -181,6 +181,9 @@ public class SpaceShip {
             drawProgrammaticSpaceShip(g2d);
         }
         
+        // Debug: Mostrar áreas de colisión (comentar/descomentar para activar/desactivar)
+        // drawDebugCollisionBounds(g2d);
+        
         g2d.dispose();
     }
     
@@ -302,6 +305,78 @@ public class SpaceShip {
         return new Rectangle(x, y, width, height);
     }
     
+    // Método mejorado para detección de colisiones más precisa
+    public Rectangle getCollisionBounds() {
+        // Reducir el área de colisión a aproximadamente 60% del tamaño de la imagen
+        // para evitar colisiones con áreas transparentes
+        int collisionWidth = (int)(width * 0.6);
+        int collisionHeight = (int)(height * 0.6);
+        int offsetX = (width - collisionWidth) / 2;
+        int offsetY = (height - collisionHeight) / 2;
+        
+        return new Rectangle(x + offsetX, y + offsetY, collisionWidth, collisionHeight);
+    }
+    
+    // Método para obtener múltiples áreas de colisión más precisas
+    public Rectangle[] getDetailedCollisionBounds() {
+        // Dividir la nave en 3 zonas principales:
+        // 1. Punta de la nave (frente)
+        // 2. Cuerpo central 
+        // 3. Cola/propulsores (atrás)
+        
+        Rectangle[] zones = new Rectangle[3];
+        
+        // Zona 1: Punta de la nave (30% frontal)
+        int frontWidth = (int)(width * 0.3);
+        int frontHeight = (int)(height * 0.4);
+        zones[0] = new Rectangle(
+            x + width - frontWidth - 10, 
+            y + (height - frontHeight) / 2, 
+            frontWidth, 
+            frontHeight
+        );
+        
+        // Zona 2: Cuerpo central (40% del medio)
+        int bodyWidth = (int)(width * 0.4);
+        int bodyHeight = (int)(height * 0.6);
+        zones[1] = new Rectangle(
+            x + (int)(width * 0.2), 
+            y + (height - bodyHeight) / 2, 
+            bodyWidth, 
+            bodyHeight
+        );
+        
+        // Zona 3: Cola/propulsores (30% trasero)
+        int tailWidth = (int)(width * 0.3);
+        int tailHeight = (int)(height * 0.3);
+        zones[2] = new Rectangle(
+            x + 10, 
+            y + (height - tailHeight) / 2, 
+            tailWidth, 
+            tailHeight
+        );
+        
+        return zones;
+    }
+    
+    // Método para verificar colisión con otro objeto usando detección mejorada
+    public boolean checkCollision(Rectangle otherBounds) {
+        // Usar primero la detección simple mejorada
+        if (!getCollisionBounds().intersects(otherBounds)) {
+            return false;
+        }
+        
+        // Si hay intersección básica, verificar con áreas detalladas
+        Rectangle[] detailedBounds = getDetailedCollisionBounds();
+        for (Rectangle zone : detailedBounds) {
+            if (zone.intersects(otherBounds)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     public void resetPosition() {
         this.x = 80; // Posición inicial ajustada para nave más grande
         this.y = gameHeight / 2 - height / 2; // Centrado verticalmente
@@ -316,4 +391,34 @@ public class SpaceShip {
     public int getY() { return y; }
     public int getWidth() { return width; }
     public int getHeight() { return height; }
+
+    // Método de debug para visualizar las áreas de colisión
+    private void drawDebugCollisionBounds(Graphics2D g2d) {
+        // Área de colisión simple mejorada (verde)
+        g2d.setColor(new Color(0, 255, 0, 100));
+        Rectangle simpleBounds = getCollisionBounds();
+        g2d.fill(simpleBounds);
+        g2d.setColor(new Color(0, 255, 0, 255));
+        g2d.setStroke(new BasicStroke(2));
+        g2d.draw(simpleBounds);
+        
+        // Áreas de colisión detalladas (rojo, azul, amarillo)
+        Rectangle[] detailedBounds = getDetailedCollisionBounds();
+        Color[] zoneColors = {
+            new Color(255, 0, 0, 100),    // Rojo para zona frontal
+            new Color(0, 0, 255, 100),    // Azul para zona central
+            new Color(255, 255, 0, 100)   // Amarillo para zona trasera
+        };
+        
+        for (int i = 0; i < detailedBounds.length; i++) {
+            // Rellenar zona
+            g2d.setColor(zoneColors[i]);
+            g2d.fill(detailedBounds[i]);
+            
+            // Contorno de zona
+            g2d.setColor(new Color(zoneColors[i].getRed(), zoneColors[i].getGreen(), zoneColors[i].getBlue(), 255));
+            g2d.setStroke(new BasicStroke(1));
+            g2d.draw(detailedBounds[i]);
+        }
+    }
 } 

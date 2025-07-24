@@ -1,415 +1,478 @@
 # 🚀 Misión Estelar de Felipe
+### Juego de Nave Espacial en Java con Gráficos 3D y Sistema Avanzado de Mecánicas
 
-[![Java Version](https://img.shields.io/badge/Java-8%2B-orange)](https://www.oracle.com/java/)
-[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)](./scripts/compile.sh)
-[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](https://www.oracle.com/java/)
+![Java](https://img.shields.io/badge/Java-11+-orange?style=for-the-badge&logo=java&logoColor=white)
+![Swing](https://img.shields.io/badge/GUI-Java%20Swing-blue?style=for-the-badge)
+![Estado](https://img.shields.io/badge/Estado-Completo-green?style=for-the-badge)
+![Música](https://img.shields.io/badge/Audio-MIDI%20Dinámico-purple?style=for-the-badge)
 
-Un emocionante juego de aventura espacial protagonizado por Felipe, desarrollado en Java con gráficos 2D avanzados, pantalla inicial cinematográfica, sistema de disparos láser, niveles progresivos y música MIDI espacial generada proceduralmente.
+---
 
-## 🎮 Demo en Vivo
+## 📋 **Índice**
+- [🎮 Descripción del Juego](#-descripción-del-juego)
+- [✨ Características Principales](#-características-principales)
+- [🛡️ Sistema de Vidas](#-sistema-de-vidas)
+- [🎯 Sistema de Detección de Colisiones](#-sistema-de-detección-de-colisiones)
+- [🎵 Sistema de Audio](#-sistema-de-audio)
+- [🚀 Instalación y Ejecución](#-instalación-y-ejecución)
+- [🎮 Controles](#-controles)
+- [📊 Sistema de Dificultad](#-sistema-de-dificultad)
+- [🏗️ Arquitectura del Código](#-arquitectura-del-código)
+- [📁 Estructura del Proyecto](#-estructura-del-proyecto)
+- [⚙️ Características Técnicas](#-características-técnicas)
+- [🔧 Requisitos del Sistema](#-requisitos-del-sistema)
 
-**"Misión Estelar de Felipe"** inicia con una pantalla cinematográfica que presenta a Felipe, un valiente astronauta, junto a su nave espacial de última generación. El juego presenta una experiencia completa con nave espacial de **160x160 píxeles** que puede moverse libremente, disparar proyectiles láser y enfrentar oleadas crecientes de obstáculos espaciales con efectos visuales pseudo-3D espectaculares.
+---
 
-### 🎬 Pantalla Inicial Cinematográfica
-- **Felipe el Astronauta**: Personaje principal con traje espacial completo
-- **Nave Espacial Avanzada**: Diseño futurista con efectos de energía
-- **Título con Efectos 3D**: "Misión Estelar de Felipe" con gradientes dorados
-- **Animaciones**: Texto parpadeante e instrucciones interactivas
+## 🎮 **Descripción del Juego**
 
-## 📋 Características Principales
+**Misión Estelar de Felipe** es un juego de nave espacial desarrollado en Java que combina mecánicas clásicas de supervivencia con tecnologías modernas de renderizado 3D. El jugador controla una nave espacial que debe sobrevivir en el espacio mientras esquiva obstáculos, destruye amenazas y progresa a través de niveles de dificultad creciente.
 
-### 🎯 Mecánicas de Juego Core
-- **🚀 Nave espacial totalmente controlable** con movimiento fluido en 4 direcciones
-- **⚡ Sistema de disparos láser avanzado** con cooldown inteligente (133ms)
-- **🌍 Obstáculos dinámicos**: Planetas con atmósferas y asteroides texturizados
-- **🌠 Lluvia de meteoritos ardientes** desde nivel 6 con física realista
-- **📈 Dificultad progresiva** que escala cada 30 segundos automáticamente
-- **🎯 Sistema de puntuación híbrido**: Supervivencia (1 pts/seg) + Combate (10-20 pts/enemigo)
+### 🌟 **Historia**
+Felipe, un intrépido astronauta, se embarca en una misión espacial peligrosa donde debe navegar a través de campos de asteroides, planetas hostiles y lluvias de meteoritos ardientes para cumplir su misión estelar.
 
-### 🎨 Motor Gráfico 2D Avanzado
-- **🌌 Gráficos pseudo-3D** con gradientes radiales y efectos volumétricos
-- **✨ Campo estelar dinámico** con 100 estrellas, paralaje multicapa y titilación
-- **🔥 Sistema de partículas** para propulsores, meteoritos y explosiones
-- **🖼️ Soporte PNG personalizable** con procesamiento automático de transparencia
-- **🌈 Efectos de iluminación** direccional y sombras proyectadas en tiempo real
-- **💫 Nebulosas espaciales** con gradientes atmosféricos y profundidad visual
+---
 
-### 🎵 Sistema de Audio MIDI
-- **🎼 Música espacial generada proceduralmente** con 3 canales simultáneos
-- **🎹 Instrumentos sintéticos**: Pad Choir, Warm Pad y efectos Sci-Fi
-- **🔄 Loop continuo** con gestión automática de recursos
-- **🔇 Control de estado** (play/stop) vinculado al ciclo de vida del juego
+## ✨ **Características Principales**
 
-## 🏗️ Arquitectura del Proyecto
+### 🎨 **Gráficos y Visual**
+- **Renderizado 3D avanzado** con efectos de gradientes radiales
+- **Sistema de partículas** para meteoritos con estelas de fuego
+- **Fondo espacial dinámico** con 100+ estrellas animadas con efecto parallax
+- **Efectos de transparencia** procesados píxel por píxel
+- **Sprites personalizados** con soporte para imágenes PNG externas
+- **Interfaz visual mejorada** con corazones animados y indicadores
 
+### 🎯 **Mecánicas de Juego**
+- **Sistema de vidas múltiples** (3 vidas iniciales)
+- **Reinicio de nivel** tras perder vida (mantiene progreso)
+- **Sistema de disparos láser** con efectos 3D
+- **Destrucción de obstáculos** con sistema de puntuación bonus
+- **Progresión de niveles** cada 20 segundos
+- **Activación automática de meteoritos** desde el nivel 6
+
+### 🚀 **Tipos de Enemigos**
+- **Asteroides rocosos** con texturas rugosas y cráteres 3D
+- **Planetas coloridos** con atmósferas, anillos y características geográficas
+- **Meteoritos ardientes** con estelas de fuego y partículas dinámicas
+
+---
+
+## 🛡️ **Sistema de Vidas**
+
+### **Mecánica de Vidas**
+- **Inicio:** 3 vidas completas (♥ ♥ ♥)
+- **Pérdida de vida:** Al colisionar con obstáculos o meteoritos
+- **Reinicio automático:** Vuelve al inicio del nivel actual después de 2 segundos
+- **Progreso conservado:** Mantiene el nivel de dificultad alcanzado
+- **Game Over:** Solo al agotar las 3 vidas
+
+### **Estados del Juego**
+1. **INTRO_SCREEN** - Pantalla de bienvenida con Felipe
+2. **PLAYING** - Juego activo
+3. **LIFE_LOST** - Pantalla de vida perdida (temporal)
+4. **GAME_OVER** - Fin del juego (reinicio completo)
+
+### **Controles de Vidas**
+- **ENTER** durante pérdida de vida: Continuar inmediatamente
+- **ENTER** en game over: Volver al menú principal
+
+---
+
+## 🎯 **Sistema de Detección de Colisiones**
+
+### **Tecnología Avanzada**
+- **Detección multi-zona** en lugar de área rectangular completa
+- **Áreas de colisión reducidas** para mayor precisión y justicia
+- **Sistema de debugging visual** disponible para desarrolladores
+
+### **Configuración de Precisión**
+```java
+// Nave espacial
+- Área general: 60% del sprite original
+- Zona frontal: 30% (punta de la nave)
+- Zona central: 40% (cuerpo principal)  
+- Zona trasera: 30% (propulsores)
+
+// Obstáculos
+- Asteroides: 75% del área original
+- Planetas: 80% del área original
+- Meteoritos: 70% del área original
 ```
-JUEGOFELI/                                    # Raíz del proyecto
-├── src/                                      # Código fuente
-│   ├── main/
-│   │   ├── java/com/juegofeli/game/         # Paquete principal
-│   │   │   ├── SpaceShipGame.java           # 🚀 Clase principal + JFrame
-│   │   │   ├── GamePanel.java               # 🎮 Motor del juego (~650 líneas)
-│   │   │   ├── SpaceShip.java               # 🛸 Nave espacial (~300 líneas)
-│   │   │   ├── Bullet.java                  # 💥 Sistema de proyectiles
-│   │   │   ├── Obstacle.java                # 🌍 Planetas y asteroides
-│   │   │   ├── Meteorite.java               # ☄️ Meteoritos ardientes
-│   │   │   └── MusicPlayer.java             # 🎵 Reproductor MIDI
-│   │   └── resources/images/                # Recursos gráficos
-│   │       └── nave_space_ship.png          # 🖼️ Imagen de nave (160x160px)
-├── build/classes/                           # Archivos compilados (.class)
-├── scripts/                                 # Scripts de automatización
-│   ├── compile.sh                          # 🔨 Compilación automática
-│   ├── run.sh                              # ▶️ Ejecución del juego
-│   └── dev.sh                              # 🛠️ Desarrollo (compile + run)
-├── docs/                                   # Documentación técnica
-├── .gitignore                              # Exclusiones de Git (68 reglas)
-└── README.md                               # 📖 Esta documentación
+
+### **Ventajas del Sistema**
+- ✅ Elimina colisiones "fantasma"
+- ✅ Gameplay más justo y preciso
+- ✅ Mejor experiencia de usuario
+- ✅ Detección pixel-perfect opcional
+
+---
+
+## 🎵 **Sistema de Audio**
+
+### **Música Dinámica MIDI**
+- **Música épica de introducción** - Melodías cinematográficas con armonías complejas
+- **Música espacial del juego** - Secuencias cósmicas procedurales
+- **Efectos cósmicos** - Ambientación sci-fi con instrumentos espaciales
+- **Transiciones automáticas** entre estados del juego
+
+### **Características del Audio**
+```java
+// Instrumentos utilizados
+- Pad 4 (choir): Sonido espacial principal
+- FX 8 (sci-fi): Efectos cósmicos de ambiente  
+- Armonías: Múltiples canales con gradientes tonales
 ```
 
-## 🚀 Guía de Instalación
+### **Control de Audio**
+- **Reproducción automática** según el estado del juego
+- **Loop continuo** para inmersión completa  
+- **Gestión de recursos** con limpieza automática
+- **Control de volumen** dinámico por canal
 
-### 📋 Prerrequisitos del Sistema
-- **☕ Java JDK 8+** (Recomendado: OpenJDK 11 o Oracle JDK 17)
-- **🐙 Git** para control de versiones
-- **💻 Terminal/CMD** con soporte para scripts bash (macOS/Linux) o PowerShell (Windows)
+---
 
-### 🔧 Verificar Instalación de Java
+## 🚀 **Instalación y Ejecución**
+
+### **Ejecución Rápida**
 ```bash
-java -version
-javac -version
-```
-*Debería mostrar Java 8 o superior*
-
-### 📦 Clonar y Configurar el Proyecto
-```bash
-# Clonar el repositorio
-git clone https://github.com/F3l1p3x13x/nave-space-game.git
-cd nave-space-game
-
-# Verificar estructura de archivos
-ls -la src/main/java/com/juegofeli/game/
-```
-
-## ⚡ Ejecución Rápida
-
-### 🎯 Opción 1: Modo Desarrollo (Recomendado)
-```bash
+# Modo desarrollo (compila y ejecuta automáticamente)
 ./scripts/dev.sh
-```
-**✅ Ventajas**: Compilación automática + ejecución inmediata + detección de errores
 
-### 🔧 Opción 2: Compilación Manual
-```bash
-# Paso 1: Compilar el proyecto
-./scripts/compile.sh
-
-# Paso 2: Ejecutar el juego
+# Solo ejecutar (si ya está compilado)
 ./scripts/run.sh
+
+# Solo compilar
+./scripts/compile.sh
 ```
 
-### 💻 Opción 3: Comandos Directos (Avanzado)
+### **Ejecución Manual**
 ```bash
-# Compilar desde raíz
+# Compilar
 javac -d build/classes -cp src/main/java src/main/java/com/juegofeli/game/*.java
 
 # Copiar recursos
 cp -r src/main/resources/* build/classes/
 
-# Ejecutar con classpath correcto
+# Ejecutar
 cd build/classes && java com.juegofeli.game.SpaceShipGame
 ```
 
-## 🎮 Controles del Juego
-
-### 🎬 Pantalla Inicial
-| Tecla | Función | Descripción |
-|-------|---------|-------------|
-| **ESPACIO** | Iniciar Misión | Comienza la aventura espacial de Felipe |
-
-### 🚀 Durante el Juego
-| Tecla | Función | Descripción |
-|-------|---------|-------------|
-| **↑** | Mover Arriba | Acelera la nave hacia arriba |
-| **↓** | Mover Abajo | Acelera la nave hacia abajo |
-| **←** | Mover Izquierda | Acelera la nave hacia la izquierda |
-| **→** | Mover Derecha | Acelera la nave hacia la derecha |
-| **ESPACIO** | Disparar Láser | Dispara proyectil láser (cooldown: 133ms) |
-
-### 💀 Game Over
-| Tecla | Función | Descripción |
-|-------|---------|-------------|
-| **ENTER** | Volver al Inicio | Regresa a la pantalla inicial cinematográfica |
-
-## 🎯 Mecánicas de Juego Detalladas
-
-### 📊 Sistema de Niveles Progresivos
-| Nivel | Tiempo | Obstáculos Base | Velocidad | Características Especiales |
-|-------|---------|-----------------|-----------|----------------------------|
-| **1-2** | 0-60s | Planetas + Asteroides | Normal | Introducción básica |
-| **3-4** | 60-120s | Más frecuentes | +25% | Obstáculos más grandes |
-| **5** | 120-150s | Oleadas intensas | +50% | Preparación para meteoritos |
-| **6+** | 150s+ | ⚠️ **LLUVIA DE METEORITOS** | +75% | Meteoritos diagonales ardientes |
-
-### 🏆 Sistema de Puntuación Avanzado
-```
-🕐 Supervivencia: +1 punto por segundo
-💥 Obstáculo destruido: +10 puntos
-☄️ Meteorito destruido: +20 puntos
-🎯 Bonus de combo: Multiplicador por eliminaciones consecutivas
-```
-
-### 👾 Tipos de Enemigos y Estrategias
-
-#### 🌍 **Planetas (Obstáculos Grandes)**
-- **Tamaño**: 40-80 píxeles de diámetro
-- **Velocidad**: Movimiento horizontal constante
-- **Estrategia**: Fáciles de esquivar, difíciles de destruir
-- **Efectos**: Atmósferas, anillos, gradientes esféricos
-
-#### 🗿 **Asteroides (Obstáculos Rápidos)**
-- **Tamaño**: 20-40 píxeles de diámetro
-- **Velocidad**: 1.5x más rápidos que planetas
-- **Estrategia**: Blancos ideales para disparos
-- **Efectos**: Superficie rugosa, cráteres, iluminación direccional
-
-#### ☄️ **Meteoritos (Nivel 6+)**
-- **Tamaño**: 15-25 píxeles de diámetro
-- **Velocidad**: Movimiento diagonal impredecible
-- **Duración**: 3 segundos de vida útil
-- **Estrategia**: Prioridad alta, alto valor en puntos
-- **Efectos**: Estelas de fuego, rotación, partículas ardientes
-
-## 🛠️ Desarrollo y Personalización
-
-### 🎨 Personalizar Imágenes del Juego
-
-#### 🚀 Nave Espacial
-1. **Reemplazar imagen**: Coloca tu PNG en `src/main/resources/images/nave_space_ship.png`
-2. **Tamaño recomendado**: 128x128 a 256x256 píxeles
-3. **Formato**: PNG con transparencia (canal alpha)
-
-#### 👨‍🚀 Personaje Felipe
-1. **Reemplazar imagen**: Coloca tu PNG en `src/main/resources/images/felipe.png`
-2. **Tamaño recomendado**: 200x300 a 400x600 píxeles (proporción 2:3)
-3. **Formato**: PNG con transparencia para mejor integración
-
-#### 🔧 Aplicar Cambios
-Después de reemplazar cualquier imagen:
+### **Requisitos de Permisos**
 ```bash
-./scripts/compile.sh  # Recompila y copia recursos
-./scripts/run.sh      # Ejecuta con nuevas imágenes
-```
-
-### ⚙️ Modificar Parámetros del Juego
-Edita las constantes en `src/main/java/com/juegofeli/game/GamePanel.java`:
-
-```java
-// Velocidad de disparos
-private static final int SHOOT_COOLDOWN_TIME = 8; // 133ms a 60 FPS
-
-// Frecuencia de obstáculos
-private int obstacleSpawnDelay = 80; // ~1.3 segundos
-
-// Velocidad de la nave
-private int speed = 5; // Píxeles por frame
-```
-
-### 🔧 Arquitectura Técnica
-
-#### 📐 Patrón de Diseño MVC
-- **Model**: Clases de entidades (SpaceShip, Obstacle, Meteorite, Bullet)
-- **View**: GamePanel con renderizado Graphics2D
-- **Controller**: GamePanel con manejo de eventos de teclado
-
-#### 🔄 Game Loop Optimizado
-```java
-Timer gameTimer = new Timer(16, actionListener); // ~60 FPS
-// Ciclo: Update Logic → Physics → Collision Detection → Rendering
-```
-
-#### 🎨 Sistema de Renderizado
-- **Anti-aliasing**: `RenderingHints.VALUE_ANTIALIAS_ON`
-- **Interpolación**: `VALUE_INTERPOLATION_BILINEAR`
-- **Composición**: `AlphaComposite` para transparencias
-- **Gradientes**: `RadialGradientPaint` y `LinearGradientPaint`
-
-## 📊 Métricas del Proyecto
-
-### 📈 Estadísticas de Código
-- **📄 Archivos Java**: 7 clases principales
-- **📝 Líneas de código**: ~1,500 líneas (sin comentarios)
-- **🔧 Métodos**: 50+ métodos públicos y privados
-- **🎨 Efectos gráficos**: 25+ tipos de efectos visuales
-- **🎵 Canales de audio**: 3 canales MIDI simultáneos
-
-### ⚡ Rendimiento del Juego
-- **🖼️ FPS objetivo**: 60 FPS
-- **⏱️ Tiempo de renderizado**: <16ms por frame
-- **🧠 Uso de memoria**: ~50MB heap típico
-- **🔊 Latencia de audio**: <10ms
-- **🎯 Detección de colisiones**: Rectangle intersection (O(n²))
-
-### 🌐 Compatibilidad
-| Plataforma | Java 8 | Java 11 | Java 17 | Java 21 |
-|------------|---------|---------|---------|---------|
-| **Windows 10/11** | ✅ | ✅ | ✅ | ✅ |
-| **macOS 10.14+** | ✅ | ✅ | ✅ | ✅ |
-| **Linux Ubuntu 18+** | ✅ | ✅ | ✅ | ✅ |
-
-## 🐛 Troubleshooting
-
-### ❌ Errores Comunes y Soluciones
-
-#### 🔴 Error: "Could not find or load main class"
-```bash
-# Solución: Compilar desde la raíz del proyecto
-cd /path/to/JUEGOFELI
-./scripts/compile.sh
-```
-
-#### 🔴 Error: "Image not found" o nave sin imagen
-```bash
-# Verificar que la imagen existe
-ls -la src/main/resources/images/nave_space_ship.png
-
-# Recompilar para copiar recursos
-./scripts/compile.sh
-```
-
-#### 🔴 Error: "Permission denied" en scripts
-```bash
-# Dar permisos de ejecución
+# Dar permisos de ejecución a los scripts (primera vez)
 chmod +x scripts/*.sh
 ```
 
-#### 🔴 Error: "MIDI device not available"
-```bash
-# El juego sigue funcionando sin música
-# Verificar drivers de audio del sistema
-```
+---
 
-### 🔍 Diagnóstico de Problemas
-```bash
-# Verificar Java
-java -version
+## 🎮 **Controles**
 
-# Verificar compilación
-ls -la build/classes/com/juegofeli/game/
+### **Controles Principales**
+| Tecla | Acción | Descripción |
+|-------|--------|-------------|
+| `↑ ↓ ← →` | **Mover nave** | Control direccional fluido |
+| `ESPACIO` | **Disparar** | Proyectiles láser con efectos 3D |
+| `ENTER` | **Confirmar** | Iniciar juego / Continuar tras perder vida |
 
-# Verificar recursos
-ls -la build/classes/images/
-
-# Ejecutar con debug
-java -Xmx512m -Djava.awt.headless=false com.juegofeli.game.SpaceShipGame
-```
-
-## ❓ Preguntas Frecuentes (FAQ)
-
-### 🤔 **¿Cómo puedo cambiar la velocidad del juego?**
-Modifica la constante del Timer en `GamePanel.java`:
+### **Controles por Estado**
 ```java
-gameTimer = new Timer(16, this); // 16ms = 60 FPS
-gameTimer = new Timer(20, this); // 20ms = 50 FPS (más lento)
+// Pantalla de inicio
+ENTER → Comenzar misión
+
+// Durante el juego  
+Flechas → Movimiento omnidireccional
+ESPACIO → Disparos láser (cooldown: 133ms)
+
+// Vida perdida
+ENTER → Reiniciar nivel inmediatamente
+Auto → Continuar después de 2 segundos
+
+// Game Over
+ENTER → Volver al menú principal
 ```
-
-### 🤔 **¿Puedo agregar más tipos de obstáculos?**
-Sí, extiende la clase `Obstacle` o crea nuevas clases similares a `Meteorite`.
-
-### 🤔 **¿El juego guarda puntuaciones altas?**
-Actualmente no, pero puedes implementar persistencia con archivos o base de datos.
-
-### 🤔 **¿Funciona en resoluciones diferentes?**
-El juego está optimizado para 800x600, pero puedes modificar las constantes `PANEL_WIDTH` y `PANEL_HEIGHT`.
-
-### 🤔 **¿Puedo compilar a JAR ejecutable?**
-Sí, usa:
-```bash
-jar -cvfe game.jar com.juegofeli.game.SpaceShipGame -C build/classes .
-java -jar game.jar
-```
-
-## 🤝 Contribuir al Proyecto
-
-### 🌟 Formas de Contribuir
-1. **🐛 Reportar bugs**: Abre un issue con detalles del problema
-2. **💡 Sugerir características**: Propón nuevas funcionalidades
-3. **🔧 Mejoras de código**: Optimizaciones y refactoring
-4. **📚 Documentación**: Mejoras en README y comentarios
-5. **🎨 Arte**: Nuevos sprites, efectos visuales o sonidos
-
-### 🔄 Workflow de Contribución
-```bash
-# 1. Fork el repositorio en GitHub
-# 2. Clonar tu fork
-git clone https://github.com/TU_USUARIO/nave-space-game.git
-
-# 3. Crear branch de feature
-git checkout -b feature/nueva-caracteristica
-
-# 4. Desarrollar y probar
-./scripts/dev.sh
-
-# 5. Commit con mensaje descriptivo
-git commit -m "✨ Agregar nueva característica: descripción"
-
-# 6. Push y crear Pull Request
-git push origin feature/nueva-caracteristica
-```
-
-### 📝 Estándares de Código
-- **Indentación**: 4 espacios
-- **Nomenclatura**: camelCase para métodos, PascalCase para clases
-- **Comentarios**: JavaDoc para métodos públicos
-- **Organización**: Una clase por archivo, paquetes organizados
-
-## 🏆 Créditos y Reconocimientos
-
-### 👨‍💻 Equipo de Desarrollo
-- **Arquitectura del motor**: Diseño del game loop y sistema de renderizado
-- **Gráficos avanzados**: Implementación de efectos pseudo-3D
-- **Sistema de audio**: Generación procedural de música MIDI
-- **Refactorización**: Estructura profesional de proyecto Java
-
-### 🛠️ Tecnologías Utilizadas
-- **☕ Java SE**: Lenguaje principal y APIs core
-- **🎨 Java 2D API**: Gráficos y renderizado avanzado
-- **🎵 Java Sound API**: Reproducción de audio MIDI
-- **🔧 Java Swing**: Framework de interfaz gráfica
-- **📦 Git**: Control de versiones y colaboración
-
-### 🎮 Inspiración
-- **Asteroids (1979)**: Mecánicas de esquivar y disparar
-- **Space Invaders**: Sistema de oleadas y progresión
-- **Geometry Wars**: Efectos visuales y partículas
-- **Juegos indie modernos**: Estética y experiencia de usuario
-
-## 📄 Licencia
-
-Este proyecto está licenciado bajo la **Licencia MIT** - consulta el archivo [LICENSE](LICENSE) para más detalles.
-
-### 📋 Términos de Uso
-- ✅ Uso comercial permitido
-- ✅ Modificación permitida
-- ✅ Distribución permitida
-- ✅ Uso privado permitido
-- ❗ Sin garantía incluida
 
 ---
 
-## 🌟 ¿Te Gusta el Proyecto?
+## 📊 **Sistema de Dificultad**
 
-⭐ **¡Dale una estrella en GitHub!** - Nos ayuda a crecer  
-🐛 **Reporta problemas** - Ayúdanos a mejorar  
-💡 **Sugiere características** - Contribuye con ideas  
-🤝 **Comparte** - Díselo a otros desarrolladores  
+### **Progresión de Niveles**
+- **Duración por nivel:** 20 segundos
+- **Incremento automático:** Cada nivel aumenta la dificultad
+- **Progresión dinámica:** Sin límite superior de niveles
+
+### **Escalado por Nivel**
+```java
+// Nivel 1-5: Obstáculos básicos
+- Spawn rate: 80 frames → 25 frames (progresivo)
+- Velocidad base: 2-4 → aumenta +0.5 cada 2 niveles
+- Tamaño: base → +2px por nivel
+
+// Nivel 6+: Lluvia de meteoritos
+- Meteoritos activados automáticamente  
+- Frecuencia: cada 2 segundos → 0.7 segundos
+- Efectos visuales: partículas ardientes
+- Advertencia en pantalla: "⚠ LLUVIA DE METEORITOS ACTIVA ⚠"
+```
+
+### **Puntuación y Bonus**
+```java
+// Sistema de scoring
+Supervivencia: +1 punto por segundo
+Destruir asteroide: +10 puntos bonus  
+Destruir meteorito: +20 puntos bonus
+Nivel completado: Score base del nivel guardado
+```
 
 ---
 
-<div align="center">
+## 🏗️ **Arquitectura del Código**
 
-**🚀 ¡Que disfrutes navegando por el espacio y enfrentando desafíos galácticos! 🌌**
+### **Patrón de Diseño**
+```java
+// Arquitectura MVC (Model-View-Controller)
+Model: SpaceShip, Obstacle, Meteorite, Bullet
+View: GamePanel (rendering + UI)  
+Controller: GamePanel (input + game logic)
+```
 
-*Desarrollado con ☕ y ❤️ por el equipo de Juego de Nave Espacial*
+### **Clases Principales**
 
-</div> 
+#### **🎮 SpaceShipGame.java**
+```java
+// Punto de entrada principal
+- Configuración de ventana (800x600)
+- Gestión del ciclo de vida de la aplicación
+- Limpieza automática de recursos
+```
+
+#### **🕹️ GamePanel.java** *(1,083 líneas)*
+```java
+// Motor principal del juego
+- Estados: INTRO_SCREEN, PLAYING, LIFE_LOST, GAME_OVER
+- Game loop: 60 FPS (~16ms por frame)
+- Renderizado: Graphics2D con antialiasing
+- Sistema de vidas y reinicio de niveles
+- Gestión de entrada de usuario
+```
+
+#### **🚀 SpaceShip.java** *(424 líneas)*
+```java
+// Clase de la nave del jugador
+- Carga de sprites PNG con transparencia
+- Procesamiento píxel por píxel de imágenes
+- Detección de colisiones multi-zona
+- Gráficos 3D programáticos como fallback
+- Sistema de debugging visual
+```
+
+#### **🪨 Obstacle.java** *(221 líneas)*
+```java
+// Obstáculos espaciales
+- Tipos: ASTEROID, PLANET
+- Gráficos 3D: gradientes radiales, texturas
+- Escalado dinámico según dificultad
+- Características únicas por tipo
+```
+
+#### **☄️ Meteorite.java** *(192 líneas)*
+```java
+// Meteoritos con efectos
+- Sistema de partículas ardientes
+- Movimiento diagonal realista
+- Rotación y estelas de fuego 3D
+- Expiración automática (3 segundos)
+```
+
+#### **💫 Bullet.java** *(86 líneas)*
+```java
+// Sistema de proyectiles
+- Efectos láser 3D con múltiples capas
+- Velocidad optimizada (12 px/frame)
+- Gestión automática de estado
+```
+
+#### **🎵 MusicPlayer.java** *(298 líneas)*
+```java
+// Sistema de audio MIDI
+- Secuencias procedurales dinámicas
+- Múltiples pistas e instrumentos
+- Gestión automática de estados
+- Efectos cósmicos ambientales
+```
+
+---
+
+## 📁 **Estructura del Proyecto**
+
+```
+JUEGOFELI/
+├── src/main/
+│   ├── java/com/juegofeli/game/
+│   │   ├── SpaceShipGame.java      # Entry point
+│   │   ├── GamePanel.java          # Motor principal
+│   │   ├── SpaceShip.java          # Nave del jugador
+│   │   ├── Obstacle.java           # Asteroides y planetas
+│   │   ├── Meteorite.java          # Meteoritos ardientes
+│   │   ├── Bullet.java             # Sistema de disparos
+│   │   └── MusicPlayer.java        # Audio MIDI
+│   └── resources/images/
+│       ├── felipe.png              # Astronauta (1024x1024)
+│       └── nave_space_ship.png     # Sprite de nave (3.3MB)
+├── scripts/
+│   ├── compile.sh                  # Script de compilación
+│   ├── run.sh                      # Script de ejecución
+│   └── dev.sh                      # Desarrollo (compila + ejecuta)
+├── build/                          # Archivos compilados
+├── docs/                           # Documentación adicional
+└── README.md                       # Esta documentación
+```
+
+---
+
+## ⚙️ **Características Técnicas**
+
+### **Rendimiento y Optimización**
+```java
+// Motor de juego
+FPS: 60 (16ms por frame)
+Resolución: 800x600 píxeles fijos
+Objetos activos: Sin límite (gestión automática)
+Limpieza automática: Objetos fuera de pantalla
+
+// Gráficos
+Renderizado: Java2D con aceleración hardware
+Antialiasing: Activado globalmente
+Transparencia: Procesamiento alfa optimizado
+Efectos: Gradientes radiales, partículas, sombras
+```
+
+### **Gestión de Memoria**
+```java
+// Optimizaciones implementadas
+- Reuso de objetos Graphics2D
+- Limpieza automática de proyectiles
+- Gestión de ciclo de vida de meteoritos
+- Liberación de recursos de audio
+- Iterator pattern para colecciones
+```
+
+### **Sistemas Avanzados**
+```java
+// Características técnicas destacadas
+✅ Detección de colisiones multi-zona
+✅ Sistema de partículas para efectos
+✅ Música MIDI procedural
+✅ Procesamiento de transparencia píxel-perfect
+✅ Efecto parallax en estrellas de fondo
+✅ Sistema de estados robusto
+✅ Gestión automática de recursos
+```
+
+---
+
+## 🔧 **Requisitos del Sistema**
+
+### **Requisitos Mínimos**
+- **Java:** JDK 11 o superior
+- **OS:** Windows, macOS, Linux
+- **RAM:** 256 MB disponible
+- **Espacio:** 10 MB libres
+- **Audio:** Compatibilidad MIDI (opcional)
+
+### **Requisitos Recomendados**
+- **Java:** JDK 17+ LTS
+- **RAM:** 512 MB+ disponible  
+- **GPU:** Aceleración hardware Java2D
+- **Audio:** Sistema de sonido integrado
+- **Pantalla:** 1024x768+ resolución
+
+### **Dependencias**
+```java
+// Librerías estándar incluidas
+java.awt.*          // Gráficos y UI
+javax.swing.*       // Interfaz de usuario
+javax.sound.midi.*  // Sistema de audio
+java.util.*         // Estructuras de datos
+```
+
+---
+
+## 🏆 **Logros del Desarrollo**
+
+### **Mejoras Implementadas**
+1. ✅ **Sistema de vidas completo** con reinicio de nivel
+2. ✅ **Detección de colisiones precisa** multi-zona  
+3. ✅ **Niveles de 20 segundos** para mayor dinamismo
+4. ✅ **Música procedural MIDI** con múltiples pistas
+5. ✅ **Gráficos 3D avanzados** con efectos de partículas
+6. ✅ **Sistema de debugging visual** para desarrolladores
+7. ✅ **Arquitectura modular** y extensible
+8. ✅ **Gestión automática de recursos** y memoria
+
+### **Estadísticas del Código**
+- **Líneas totales:** ~2,400+ líneas
+- **Archivos Java:** 7 clases principales
+- **Métodos:** 80+ métodos implementados  
+- **Estados de juego:** 4 estados manejados
+- **Sistemas:** 8 subsistemas integrados
+
+---
+
+## 🎯 **Gameplay y Estrategia**
+
+### **Estrategias de Supervivencia**
+1. **Movimiento defensivo:** Mantén distancia de los bordes
+2. **Disparo estratégico:** Destruye obstáculos para ganar puntos
+3. **Gestión de vidas:** Usa las 3 vidas sabiamente
+4. **Nivel 6+:** Prioriza esquivar meteoritos sobre destruirlos
+
+### **Mecánicas Avanzadas**
+- **Cooldown de disparo:** 133ms entre proyectiles
+- **Velocidad de meteoritos:** Diagonal realista (2-5 px/frame)
+- **Spawn rate dinámico:** Aceleración progresiva por nivel
+- **Sistema de scoring:** Supervivencia + bonus por destrucción
+
+---
+
+## 👨‍💻 **Para Desarrolladores**
+
+### **Debug Mode**
+```java
+// Activar visualización de áreas de colisión
+// En SpaceShip.java, línea 181:
+drawDebugCollisionBounds(g2d); // Descomentar esta línea
+```
+
+### **Personalización**
+```java
+// Configuraciones editables
+GamePanel.java:
+- PANEL_WIDTH/HEIGHT: Resolución de ventana
+- MAX_LIVES: Número de vidas iniciales
+- SHOOT_COOLDOWN_TIME: Velocidad de disparo
+
+SpaceShip.java:  
+- width/height: Tamaño de la nave
+- speed: Velocidad de movimiento
+```
+
+### **Extensiones Futuras**
+- [ ] Power-ups y mejoras de nave
+- [ ] Múltiples tipos de proyectiles
+- [ ] Jefes de nivel (boss fights)
+- [ ] Sistema de puntuación global
+- [ ] Multijugador local
+- [ ] Más tipos de obstáculos
+
+---
+
+## 📄 **Licencia**
+Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+
+## 🤝 **Contribuciones**
+Las contribuciones son bienvenidas. Por favor, abre un issue antes de realizar cambios mayores.
+
+---
+
+**🚀 ¡Feliz vuelo espacial, Felipe! ¡Que tengas una misión estelar exitosa! 🌟** 

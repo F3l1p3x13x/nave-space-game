@@ -196,6 +196,25 @@ public class Obstacle {
         return new Rectangle(x, y, width, height);
     }
     
+    // Método mejorado para detección de colisiones más precisa
+    public Rectangle getCollisionBounds() {
+        if (type == ObstacleType.ASTEROID) {
+            // Asteroides: reducir 75% del área original (más irregular)
+            int collisionWidth = (int)(width * 0.75);
+            int collisionHeight = (int)(height * 0.75);
+            int offsetX = (width - collisionWidth) / 2;
+            int offsetY = (height - collisionHeight) / 2;
+            return new Rectangle(x + offsetX, y + offsetY, collisionWidth, collisionHeight);
+        } else {
+            // Planetas: reducir 80% del área original (más esférico)
+            int collisionWidth = (int)(width * 0.8);
+            int collisionHeight = (int)(height * 0.8);
+            int offsetX = (width - collisionWidth) / 2;
+            int offsetY = (height - collisionHeight) / 2;
+            return new Rectangle(x + offsetX, y + offsetY, collisionWidth, collisionHeight);
+        }
+    }
+    
     public int getX() { return x; }
     public int getY() { return y; }
     public ObstacleType getType() { return type; }

@@ -173,6 +173,18 @@ public class Meteorite {
         return new Rectangle((int)x, (int)y, width, height);
     }
     
+    // Método mejorado para detección de colisiones más precisa
+    public Rectangle getCollisionBounds() {
+        // Reducir el área de colisión a aproximadamente 70% del tamaño 
+        // para hacer las colisiones más justas
+        int collisionWidth = (int)(width * 0.7);
+        int collisionHeight = (int)(height * 0.7);
+        int offsetX = (width - collisionWidth) / 2;
+        int offsetY = (height - collisionHeight) / 2;
+        
+        return new Rectangle((int)x + offsetX, (int)y + offsetY, collisionWidth, collisionHeight);
+    }
+    
     public float getX() { return x; }
     public float getY() { return y; }
     public int getWidth() { return width; }

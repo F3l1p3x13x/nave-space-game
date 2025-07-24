@@ -21,7 +21,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private enum GameState {
         INTRO_SCREEN,
         PLAYING,
-        GAME_OVER
+        GAME_OVER,
+        LIFE_LOST
     }
     
     private GameState currentState;
@@ -36,6 +37,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private long startTime;
     private long currentTime;
     private int score;
+    
+    // Sistema de vidas
+    private int lives;
+    private static final int MAX_LIVES = 3;
+    private long lifeLostTime;
+    private static final int LIFE_LOST_DISPLAY_TIME = 2000; // 2 segundos
+    private int currentLevelScore; // Score del nivel actual para restaurar después de perder vida
     
     // Control de teclas
     private boolean upPressed, downPressed, leftPressed, rightPressed;
@@ -241,7 +249,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         startTime = System.currentTimeMillis();
         lastDifficultyIncrease = startTime;
         score = 0;
+        currentLevelScore = 0;
         difficultyLevel = 1;
+        lives = MAX_LIVES;
         showLevelUpMessage = false;
         obstacles.clear();
         meteorites.clear();
@@ -270,6 +280,61 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
     
+    // Método para manejar la pérdida de una vida
+    private void loseLife() {
+        lives--;
+        
+        if (lives <= 0) {
+            // Se acabaron las vidas, game over real
+            gameRunning = false;
+            currentState = GameState.GAME_OVER;
+            
+            // Detener música al terminar el juego
+            if (musicPlayer != null) {
+                musicPlayer.stopMusic();
+            }
+        } else {
+            // Aún hay vidas, mostrar mensaje y reiniciar nivel
+            currentState = GameState.LIFE_LOST;
+            lifeLostTime = System.currentTimeMillis();
+            
+            // Pausar el juego temporalmente
+            gameRunning = false;
+        }
+    }
+    
+    // Método para reiniciar el nivel actual (mantener progreso)
+    private void restartCurrentLevel() {
+        // Restaurar score al inicio del nivel actual
+        score = currentLevelScore;
+        
+        // Limpiar obstáculos y proyectiles del nivel
+        obstacles.clear();
+        meteorites.clear();
+        bullets.clear();
+        
+        // Resetear timers del nivel
+        obstacleSpawnTimer = 0;
+        meteoriteSpawnTimer = 0;
+        shootCooldown = 0;
+        spacePressed = false;
+        
+        // Restaurar posición de la nave
+        spaceShip.resetPosition();
+        
+        // Resetear estado de teclas
+        upPressed = downPressed = leftPressed = rightPressed = false;
+        
+        // Volver al estado de juego activo
+        currentState = GameState.PLAYING;
+        gameRunning = true;
+        
+        // Reiniciar música del juego
+        if (musicPlayer != null) {
+            musicPlayer.playGameMusic();
+        }
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (currentState) {
@@ -285,6 +350,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             case PLAYING:
                 if (gameRunning) {
                     update();
+                }
+                break;
+            case LIFE_LOST:
+                // Verificar si es hora de reiniciar el nivel actual
+                if (System.currentTimeMillis() - lifeLostTime >= LIFE_LOST_DISPLAY_TIME) {
+                    restartCurrentLevel();
+                }
+                
+                // Actualizar estrellas de fondo durante pérdida de vida
+                for (Star star : stars) {
+                    star.update();
+                    if (star.getX() < 0) {
+                        star.reset(PANEL_WIDTH);
+                    }
                 }
                 break;
             case GAME_OVER:
@@ -308,7 +387,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         score = (int) (elapsedTime / 1000);
         
         // Verificar si es hora de aumentar la dificultad (cada 30 segundos)
-        if (currentTime - lastDifficultyIncrease >= 30000) {
+        if (currentTime - lastDifficultyIncrease >= 20000) {
             increaseDifficulty();
             lastDifficultyIncrease = currentTime;
         }
@@ -358,15 +437,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             if (obstacle.isOffScreen()) {
                 obstacleIterator.remove();
             }
-            // Verificar colisiones
-            else if (spaceShip.getBounds().intersects(obstacle.getBounds())) {
-                gameRunning = false;
-                currentState = GameState.GAME_OVER;
-                
-                // Detener música al terminar el juego
-                if (musicPlayer != null) {
-                    musicPlayer.stopMusic();
-                }
+            // Verificar colisiones usando detección mejorada
+            else if (spaceShip.checkCollision(obstacle.getCollisionBounds())) {
+                loseLife();
                 return;
             }
         }
@@ -381,15 +454,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             if (meteorite.isExpired() || meteorite.isOffScreen(PANEL_WIDTH, PANEL_HEIGHT)) {
                 meteoriteIterator.remove();
             }
-            // Verificar colisiones con meteoritos
-            else if (spaceShip.getBounds().intersects(meteorite.getBounds())) {
-                gameRunning = false;
-                currentState = GameState.GAME_OVER;
-                
-                // Detener música al terminar el juego
-                if (musicPlayer != null) {
-                    musicPlayer.stopMusic();
-                }
+            // Verificar colisiones con meteoritos usando detección mejorada
+            else if (spaceShip.checkCollision(meteorite.getCollisionBounds())) {
+                loseLife();
                 return;
             }
         }
@@ -405,6 +472,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     
     private void increaseDifficulty() {
         difficultyLevel++;
+        
+        // Guardar el score actual como score del nuevo nivel (para sistema de vidas)
+        currentLevelScore = score;
         
         // Mostrar mensaje de nivel up
         showLevelUpMessage = true;
@@ -497,6 +567,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             case PLAYING:
                 drawGameScreen(g);
                 break;
+            case LIFE_LOST:
+                drawLifeLostScreen(g);
+                break;
             case GAME_OVER:
                 drawGameOverScreen(g);
                 break;
@@ -544,8 +617,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             g.setFont(new Font("Arial", Font.BOLD, 18));
             g.drawString("Nivel: " + difficultyLevel, 10, 60);
             
+            // Mostrar vidas
+            g.setColor(Color.RED);
+            g.setFont(new Font("Arial", Font.BOLD, 18));
+            String livesText = "Vidas: ";
+            for (int i = 0; i < lives; i++) {
+                livesText += "♥ ";
+            }
+            // Mostrar corazones vacíos para vidas perdidas
+            for (int i = lives; i < MAX_LIVES; i++) {
+                livesText += "♡ ";
+            }
+            g.drawString(livesText, 250, 60);
+            
             // Mostrar tiempo hasta próximo nivel
-            long timeUntilNextLevel = 30 - ((currentTime - lastDifficultyIncrease) / 1000);
+            long timeUntilNextLevel = 20 - ((currentTime - lastDifficultyIncrease) / 1000);
             g.setColor(Color.LIGHT_GRAY);
             g.setFont(new Font("Arial", Font.PLAIN, 14));
             g.drawString("Próximo nivel en: " + timeUntilNextLevel + "s", 10, 85);
@@ -706,6 +792,66 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.drawString(restartText, (PANEL_WIDTH - fm.stringWidth(restartText)) / 2, PANEL_HEIGHT / 2 + 50);
     }
     
+    private void drawLifeLostScreen(Graphics g) {
+        // Dibujar fondo espacial con estrellas
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        drawSpaceBackground(g2d);
+        
+        // Dibujar estrellas de fondo
+        for (Star star : stars) {
+            star.draw(g2d);
+        }
+        g2d.dispose();
+        
+        // Mensaje principal de vida perdida
+        g.setColor(Color.ORANGE);
+        g.setFont(new Font("Arial", Font.BOLD, 36));
+        FontMetrics fm = g.getFontMetrics();
+        String lifeLostText = "¡VIDA PERDIDA!";
+        g.drawString(lifeLostText, (PANEL_WIDTH - fm.stringWidth(lifeLostText)) / 2, PANEL_HEIGHT / 2 - 60);
+        
+        // Mostrar vidas restantes
+        g.setColor(Color.RED);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        fm = g.getFontMetrics();
+        String livesText = "Vidas restantes: " + lives;
+        g.drawString(livesText, (PANEL_WIDTH - fm.stringWidth(livesText)) / 2, PANEL_HEIGHT / 2 - 20);
+        
+        // Mostrar corazones
+        g.setFont(new Font("Arial", Font.BOLD, 32));
+        String heartsText = "";
+        for (int i = 0; i < lives; i++) {
+            heartsText += "♥ ";
+        }
+        for (int i = lives; i < MAX_LIVES; i++) {
+            heartsText += "♡ ";
+        }
+        fm = g.getFontMetrics();
+        g.drawString(heartsText, (PANEL_WIDTH - fm.stringWidth(heartsText)) / 2, PANEL_HEIGHT / 2 + 15);
+        
+        // Mensaje de reinicio del nivel
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        fm = g.getFontMetrics();
+        String restartText = "Reiniciando nivel " + difficultyLevel + "...";
+        g.drawString(restartText, (PANEL_WIDTH - fm.stringWidth(restartText)) / 2, PANEL_HEIGHT / 2 + 60);
+        
+        // Instrucción para continuar
+        g.setColor(Color.LIGHT_GRAY);
+        g.setFont(new Font("Arial", Font.PLAIN, 16));
+        fm = g.getFontMetrics();
+        String continueText = "Presiona ENTER para continuar inmediatamente";
+        g.drawString(continueText, (PANEL_WIDTH - fm.stringWidth(continueText)) / 2, PANEL_HEIGHT / 2 + 90);
+        
+        // Mostrar progreso del nivel actual
+        g.setColor(Color.YELLOW);
+        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        fm = g.getFontMetrics();
+        String levelText = "Score del nivel: " + currentLevelScore + "s";
+        g.drawString(levelText, (PANEL_WIDTH - fm.stringWidth(levelText)) / 2, PANEL_HEIGHT / 2 + 120);
+    }
+    
     @Override
     public void keyPressed(KeyEvent e) {
         switch (currentState) {
@@ -731,6 +877,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     case KeyEvent.VK_SPACE:
                         spacePressed = true;
                         break;
+                }
+                break;
+            case LIFE_LOST:
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    restartCurrentLevel();
                 }
                 break;
             case GAME_OVER:
