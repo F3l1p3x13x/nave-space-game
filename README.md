@@ -1,15 +1,16 @@
 # 🚀 Misión Estelar de Felipe
-### Juego de Nave Espacial en Java con Gráficos 3D y Sistema Avanzado de Mecánicas
+### Juego de Nave Espacial Multiplataforma - Java Desktop + Android
 
 ![Java](https://img.shields.io/badge/Java-11+-orange?style=for-the-badge&logo=java&logoColor=white)
-![Swing](https://img.shields.io/badge/GUI-Java%20Swing-blue?style=for-the-badge)
+![Android](https://img.shields.io/badge/Android-21+-green?style=for-the-badge&logo=android&logoColor=white)
 ![Estado](https://img.shields.io/badge/Estado-Completo-green?style=for-the-badge)
-![Música](https://img.shields.io/badge/Audio-MIDI%20Dinámico-purple?style=for-the-badge)
+![Plataformas](https://img.shields.io/badge/Plataformas-Desktop%20%7C%20Mobile-blue?style=for-the-badge)
 
 ---
 
 ## 📋 **Índice**
 - [🎮 Descripción del Juego](#-descripción-del-juego)
+- [📱 Versiones Disponibles](#-versiones-disponibles)
 - [✨ Características Principales](#-características-principales)
 - [🛡️ Sistema de Vidas](#-sistema-de-vidas)
 - [🎯 Sistema de Detección de Colisiones](#-sistema-de-detección-de-colisiones)
@@ -26,7 +27,34 @@
 
 ## 🎮 **Descripción del Juego**
 
-**Misión Estelar de Felipe** es un juego de nave espacial desarrollado en Java que combina mecánicas clásicas de supervivencia con tecnologías modernas de renderizado 3D. El jugador controla una nave espacial que debe sobrevivir en el espacio mientras esquiva obstáculos, destruye amenazas y progresa a través de niveles de dificultad creciente.
+**Misión Estelar de Felipe** es un juego de nave espacial multiplataforma desarrollado en Java que combina mecánicas clásicas de supervivencia con tecnologías modernas de renderizado. El jugador controla una nave espacial que debe sobrevivir en el espacio mientras esquiva obstáculos, destruye amenazas y progresa a través de niveles de dificultad creciente.
+
+## 📱 **Versiones Disponibles**
+
+### 🖥️ **Versión Desktop (Branch: `java`)**
+- **Plataforma:** Java Swing (Windows, macOS, Linux)
+- **Controles:** Teclado (flechas + espacio)
+- **Audio:** Sistema MIDI procedural completo
+- **Gráficos:** Renderizado 3D avanzado con Java2D
+
+### 📱 **Versión Android (Branch: `android`)**
+- **Plataforma:** Android 21+ (API Level 21)
+- **Controles:** Touch táctil optimizado para móviles
+- **Audio:** Sistema de audio Android nativo
+- **Gráficos:** Canvas optimizado para dispositivos móviles
+- **Características:** Vibración háptica, pantalla completa
+
+### 🔄 **Cambio entre Versiones**
+```bash
+# Para la versión Desktop (Java Swing)
+git checkout java
+
+# Para la versión Android
+git checkout android
+
+# Volver a la rama principal
+git checkout main
+```
 
 ### 🌟 **Historia**
 Felipe, un intrépido astronauta, se embarca en una misión espacial peligrosa donde debe navegar a través de campos de asteroides, planetas hostiles y lluvias de meteoritos ardientes para cumplir su misión estelar.
@@ -134,8 +162,11 @@ Felipe, un intrépido astronauta, se embarca en una misión espacial peligrosa d
 
 ## 🚀 **Instalación y Ejecución**
 
-### **Ejecución Rápida**
+### **🖥️ Ejecución Desktop (Branch: java)**
 ```bash
+# Cambiar a la rama Java
+git checkout java
+
 # Modo desarrollo (compila y ejecuta automáticamente)
 ./scripts/dev.sh
 
@@ -144,6 +175,21 @@ Felipe, un intrépido astronauta, se embarca en una misión espacial peligrosa d
 
 # Solo compilar
 ./scripts/compile.sh
+```
+
+### **📱 Ejecución Android (Branch: android)**
+```bash
+# Cambiar a la rama Android
+git checkout android
+
+# Compilar APK (requiere Android SDK)
+./gradlew assembleDebug
+
+# Instalar en dispositivo conectado
+./gradlew installDebug
+
+# Abrir en Android Studio
+# File → Open → Seleccionar la carpeta del proyecto
 ```
 
 ### **Ejecución Manual**
@@ -176,6 +222,8 @@ chmod +x scripts/*.sh
 | `ENTER` | **Confirmar** | Iniciar juego / Continuar tras perder vida |
 
 ### **Controles por Estado**
+
+#### 🖥️ **Versión Desktop (Java Swing)**
 ```java
 // Pantalla de inicio
 ENTER → Comenzar misión
@@ -190,6 +238,24 @@ Auto → Continuar después de 2 segundos
 
 // Game Over
 ENTER → Volver al menú principal
+```
+
+#### 📱 **Versión Android (Touch)**
+```java
+// Pantalla de inicio
+Toca pantalla → Comenzar misión
+
+// Durante el juego
+Toca y arrastra → Mover nave hacia el dedo
+Mantén presionado → Disparar automáticamente (después de 200ms)
+Botón pausa → Pausar/reanudar juego
+
+// Vida perdida
+Toca pantalla → Continuar inmediatamente
+Auto → Continuar después de 2 segundos
+
+// Game Over
+Botón atrás → Volver al menú principal
 ```
 
 ---

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/space_black"
+    tools:context=".GameActivity">
+
+    <!-- Game view (custom view that handles all game rendering) -->
+    <com.juegofeli.spacemission.views.GameView
+        android:id="@+id/gameView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- UI Overlay -->
+    <LinearLayout
+        android:id="@+id/uiOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Left side info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/scoreText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiempo: 0s"
+                style="@style/GameText" />
+
+            <TextView
+                android:id="@+id/levelText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nivel: 1"
+                style="@style/LevelIndicator" />
+
+            <TextView
+                android:id="@+id/nextLevelText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Próximo nivel en: 20s"
+                style="@style/GameText"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- Right side info -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/livesText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vidas: ♥ ♥ ♥"
+                style="@style/LifeIndicator" />
+
+            <TextView
+                android:id="@+id/meteoriteWarning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/meteorite_warning"
+                android:textColor="@color/warning_orange"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Pause/Menu button -->
+    <Button
+        android:id="@+id/pauseButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="⏸"
+        android:textSize="16sp"
+        android:background="@android:color/transparent"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout> 

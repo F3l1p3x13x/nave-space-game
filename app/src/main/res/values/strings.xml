@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Misión Estelar de Felipe</string>
+    <string name="game_title">MISIÓN ESTELAR\nDE FELIPE</string>
+    <string name="start_game">Toca para comenzar la misión</string>
+    <string name="controls_info">Controles: Toca para mover | Toca y mantén para disparar</string>
+    <string name="game_over">GAME OVER</string>
+    <string name="life_lost">¡VIDA PERDIDA!</string>
+    <string name="lives_remaining">Vidas restantes: %d</string>
+    <string name="restart_level">Reiniciando nivel %d...</string>
+    <string name="tap_to_continue">Toca para continuar</string>
+    <string name="survived_time">Tiempo sobrevivido: %d segundos</string>
+    <string name="level">Nivel: %d</string>
+    <string name="next_level_in">Próximo nivel en: %d s</string>
+    <string name="meteorite_warning">⚠ LLUVIA DE METEORITOS ACTIVA ⚠</string>
+    <string name="active_meteorites">Meteoritos activos: %d</string>
+    <string name="score_bonus_asteroid">+10 puntos</string>
+    <string name="score_bonus_meteorite">+20 puntos</string>
+</resources> 
