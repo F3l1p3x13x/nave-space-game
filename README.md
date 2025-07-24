@@ -182,15 +182,44 @@ git checkout java
 # Cambiar a la rama Android
 git checkout android
 
-# Compilar APK (requiere Android SDK)
-./gradlew assembleDebug
+# OPCIÓN 1: Script automático (recomendado)
+./build-apk.sh
 
-# Instalar en dispositivo conectado
-./gradlew installDebug
-
-# Abrir en Android Studio
+# OPCIÓN 2: Android Studio (más fácil)
 # File → Open → Seleccionar la carpeta del proyecto
+# Build → Generate Signed Bundle/APK
+
+# OPCIÓN 3: Línea de comandos (requiere Android SDK configurado)
+./gradlew assembleDebug
+adb install app/build/outputs/apk/debug/app-debug.apk
 ```
+
+### **🛠️ Generación de APK**
+
+El proyecto incluye un script automatizado para generar el APK instalable:
+
+#### **📦 Método Rápido:**
+```bash
+git checkout android
+./build-apk.sh
+```
+
+#### **🔧 Requisitos para compilar:**
+- **Java 11+** (✅ Incluido en macOS/Linux)
+- **Android Studio** (recomendado) o **Android SDK**
+- **Dispositivo Android** o **Emulador**
+
+#### **📱 Instalación en Dispositivo:**
+1. **Habilitar modo desarrollador:**
+   - Configuración → Acerca del teléfono
+   - Toca "Número de compilación" 7 veces
+2. **Habilitar depuración USB:**
+   - Configuración → Opciones de desarrollador → Depuración USB
+3. **Instalar APK:**
+   ```bash
+   adb install app/build/outputs/apk/debug/app-debug.apk
+   ```
+   O transferir el archivo `.apk` al dispositivo y abrirlo
 
 ### **Ejecución Manual**
 ```bash
